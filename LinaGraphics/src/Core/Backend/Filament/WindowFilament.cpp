@@ -85,6 +85,8 @@ namespace Lina::Graphics
 		m_eventSys->Trigger<Event::EWindowContextCreated>({ (void*)m_glfwWindow });
 		LINA_TRACE("[Window GLFW] -> Created context ready for Vulkan");
 
+		SetPosCentered(V2_ZERO);
+
 		// set user pointer for callbacks.
 		glfwSetWindowUserPointer(m_glfwWindow, this);
 

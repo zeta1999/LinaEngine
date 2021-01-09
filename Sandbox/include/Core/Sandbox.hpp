@@ -47,10 +47,10 @@ int main(int argc, char** argv)
 	Lina::ApplicationInfo appInfo;
 	appInfo.m_windowProperties.m_width = 800;
 	appInfo.m_windowProperties.m_height = 600;
-	appInfo.m_appMode = Lina::ApplicationMode::Standalone;
+	appInfo.m_windowProperties.m_decorated = false;
+	appInfo.m_appMode = Lina::ApplicationMode::Editor;
 	app.Startup(appInfo);
 	return 0;
-
 }
 
 class Sandbox

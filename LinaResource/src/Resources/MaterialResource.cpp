@@ -40,10 +40,35 @@ namespace Lina::Resources
     bool MaterialResource::LoadFromFile(const std::string& path, Event::EventSystem* eventSys)
     {
 #ifdef LINA_GRAPHICS_FILAMENT
+       
+        std::ifstream file(path, std::ios::binary);
+        // Stop eating new lines in binary mode!!!
+        file.unsetf(std::ios::skipws);
 
+        // get its size:
+        std::streampos fileSize;
+
+        file.seekg(0, std::ios::end);
+        fileSize = file.tellg();
+        file.seekg(0, std::ios::beg);
+
+        Event::EMaterialResourceLoaded e = Event::EMaterialResourceLoaded();
+        e.m_sid = StringID(path.c_str()).value();
+
+        // reserve capacity
+        e.m_data.reserve(fileSize);
+
+        // read the data:
+        e.m_data.insert(e.m_data.begin(),
+            std::istream_iterator<unsigned char>(file),
+            std::istream_iterator<unsigned char>());
         // Trigger event w/ data
-        eventSys->Trigger<Event::EMaterialResourceLoaded>({ StringID(path.c_str()).value(), path });
+  
+        eventSys->Trigger<Event::EMaterialResourceLoaded>(e);
+        LINA_TRACE("[Material Loader] -> Material loaded from file: {0}", path);
+
         return true;
+
 #else
         // LoadFromFile the level file if exists.
         if (FileUtility::FileExists(path))
@@ -69,6 +94,10 @@ namespace Lina::Resources
 
     bool MaterialResource::LoadFromMemory(StringIDType m_sid, unsigned char* buffer, size_t bufferSize, Event::EventSystem* eventSys)
     {
+#ifdef LINA_GRAPHICS_FILAMENT
+
+        return true;
+#else
         {
             std::string data((char*)buffer, bufferSize);
             std::istringstream stream(data);
@@ -80,6 +109,7 @@ namespace Lina::Resources
 
         LINA_TRACE("[Material Loader] -> Material loaded from memory.");
         return true;
+#endif
     }
 
 

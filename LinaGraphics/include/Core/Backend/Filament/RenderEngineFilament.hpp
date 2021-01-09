@@ -72,6 +72,7 @@ namespace filament
 	class Scene;
 	class TransformManager;
 	class RenderableManager;
+	class Material;
 };
 
 
@@ -109,6 +110,8 @@ namespace Lina::Graphics
 		void Tick();
 		void Render();
 		void DisconnectEvents();
+		void AddMeshData();
+		void AddMaterialData();
 	
 	private:
 
@@ -125,11 +128,15 @@ namespace Lina::Graphics
 		filament::Scene* m_gameScene = nullptr;
 		filament::TransformManager* m_transformManager = nullptr;
 		filament::RenderableManager* m_renderableManager = nullptr;
+		filament::Material* m_defaultMaterial = nullptr;
+		filament::MaterialInstance* m_defaultMaterialInstance = nullptr;
 		utils::EntityManager* m_entityManager = nullptr;
-		std::unordered_map < StringIDType, std::vector<unsigned char>> m_meshesStandalone;
+		std::unordered_map < StringIDType, std::vector<unsigned char>> m_meshesToLoadStandalone;
 		std::unordered_map < StringIDType, std::vector<unsigned char>> m_standaloneMeshBuffer;
-		std::unordered_map < StringIDType, std::string> m_meshesEditor;
+		std::unordered_map < StringIDType, std::string> m_meshesToLoadEditor;
+		std::unordered_map < StringIDType, std::vector<unsigned char>> m_materialBuffer;
 		std::unordered_map<StringIDType, filamesh::MeshReader::Mesh> m_loadedMeshes;
+		std::unordered_map<StringIDType, filament::Material*> m_loadedMaterials;
 		ApplicationInfo* m_appInfo = nullptr;
 	};
 }

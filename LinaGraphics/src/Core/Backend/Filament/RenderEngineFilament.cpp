@@ -50,6 +50,7 @@ SOFTWARE.
 #include <filament/View.h>
 #include <filament/Texture.h>
 #include <utils/EntityManager.h>
+#include <filament/Material.h>
 #include <cmath>
 #include <filament/Viewport.h>
 #include <utils/Path.h>
@@ -58,7 +59,6 @@ SOFTWARE.
 #include "Core/Backend/Filament/MaterialResources/materialresources.h"
 #include "Core/Backend/Filament/MaterialResources/monkey.h"
 #include "Math/Math.hpp"
-#include <filamat/MaterialBuilder.h>
 #include <utils/Path.h>
 
 
@@ -82,12 +82,10 @@ static constexpr uint16_t TRIANGLE_INDICES[3] = { 0, 1, 2 };
 namespace Lina::Graphics
 {
 	
-	Material* mat;
 	TransformManager::Instance ti2;
 	Entity renderable;
 	filamesh::MeshReader::Mesh* mesh;
 	filamesh::MeshReader::Mesh* mesh2;
-	MaterialInstance* mi;
 
 	RenderEngineFilament::~RenderEngineFilament()
 	{
@@ -132,8 +130,7 @@ namespace Lina::Graphics
 		m_renderableManager = &m_engine->getRenderableManager();
 
 		// Configure game scene, camera & view.
-		auto sb = Skybox::Builder().color(math::float4{ 0.0735f, 0.035f, 0.035f, 1.0f }).showSun(true).build(*m_engine);
-	
+		auto sb = Skybox::Builder().color(math::float4{ 0.0735f, 0.035f, 0.035f, 1.0f }).showSun(true).build(*m_engine);	
 		double aspect = ((double)e.m_appInfo->m_windowProperties.m_width / (double)e.m_appInfo->m_windowProperties.m_height);
 		m_gameScene->setSkybox(sb);
 		m_gameCamera->setExposure(16.0f, 1 / 125.0f, 100.0f);
@@ -146,14 +143,13 @@ namespace Lina::Graphics
 		m_gameView->setName("game-view");
 
 		m_initialized = true;
-		Material* mat = Material::Builder().package(MATERIALRESOURCES_AIDEFAULTMAT_DATA, MATERIALRESOURCES_AIDEFAULTMAT_SIZE).build(*m_engine);
-	
-		MaterialInstance* instance;
-		mi = instance = mat->createInstance();
-		mi->setParameter("baseColor", RgbType::LINEAR, filament::math::float3{ 0.5, 0.9, 0.1 });
-		mi->setParameter("metallic", 1.0f);
-		mi->setParameter("roughness", 1.0f);
-		mi->setParameter("reflectance", 1.0f);
+
+		m_defaultMaterial = Material::Builder().package(MATERIALRESOURCES_AIDEFAULTMAT_DATA, MATERIALRESOURCES_AIDEFAULTMAT_SIZE).build(*m_engine);
+		m_defaultMaterialInstance = m_defaultMaterial->createInstance();
+		m_defaultMaterialInstance->setParameter("baseColor", RgbType::LINEAR, filament::math::float3{ 0.5, 0.9, 0.1 });
+		m_defaultMaterialInstance->setParameter("metallic", 1.0f);
+		m_defaultMaterialInstance->setParameter("roughness", 1.0f);
+		m_defaultMaterialInstance->setParameter("reflectance", 1.0f);
 	
 		utils::Entity light;
 
@@ -189,13 +185,14 @@ namespace Lina::Graphics
 	void RenderEngineFilament::OnMeshResourceLoaded(Event::EMeshResourceLoaded& e)
 	{
 		if (m_appInfo->m_appMode == ApplicationMode::Standalone)
-			m_meshesStandalone[e.m_sid] = e.m_data;
+			m_meshesToLoadStandalone[e.m_sid] = e.m_data;
 		else
-			m_meshesEditor[e.m_sid] = e.m_path;
+			m_meshesToLoadEditor[e.m_sid] = e.m_path;
 	}
 
 	void RenderEngineFilament::OnMaterialResourceLoaded(Event::EMaterialResourceLoaded& e)
 	{
+		m_materialBuffer[e.m_sid] = e.m_data;
 	}
 
 	static float t = 0.0f;
@@ -204,52 +201,11 @@ namespace Lina::Graphics
 	{
 		PROFILER_FUNC();
 
-		if (m_appInfo->m_appMode == ApplicationMode::Standalone)
-		{
-			auto it = m_meshesStandalone.begin();
+		m_materialBuffer.clear();
+		// Check if any resource is requested to be loaded & load them if so.
+		AddMeshData();
+		AddMaterialData();
 
-			while (it != m_meshesStandalone.end())
-			{
-				m_standaloneMeshBuffer[it->first] = it->second;
-				m_loadedMeshes.emplace(it->first, filamesh::MeshReader::loadMeshFromBuffer(m_engine, m_standaloneMeshBuffer[it->first].data(), nullptr, nullptr, mi));
-				filamesh::MeshReader::Mesh* mesh = &m_loadedMeshes[it->first];
-
-				auto ti = m_transformManager->getInstance(mesh->renderable);
-				math::mat4f transform = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(0, 0, 0) };
-				math::mat4f transform2 = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(-1, -1.1f, 0) };
-				m_transformManager->setTransform(ti, transform);
-				m_transformManager->setTransform(ti2, transform2);
-				m_renderableManager->setCastShadows(m_renderableManager->getInstance(mesh->renderable), true);
-
-				m_gameScene->addEntity(mesh->renderable);
-
-				it = m_meshesStandalone.erase(it);
-			}
-		}
-		else
-		{
-			auto it = m_meshesEditor.begin();
-
-			while (it != m_meshesEditor.end())
-			{
-				utils::Path path = it->second;
-				filamesh::MeshReader::MaterialRegistry reg;
-				reg.registerMaterialInstance(utils::CString("DefaultMaterial"), mi);
-				m_loadedMeshes.emplace(it->first, filamesh::MeshReader::loadMeshFromFile(m_engine, path, reg));
-				filamesh::MeshReader::Mesh* mesh = &m_loadedMeshes[it->first];
-
-				auto ti = m_transformManager->getInstance(mesh->renderable);
-				math::mat4f transform = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(0, 0, 0) };
-				math::mat4f transform2 = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(-1, -1.1f, 0) };
-				m_transformManager->setTransform(ti, transform);
-				m_transformManager->setTransform(ti2, transform2);
-				m_renderableManager->setCastShadows(m_renderableManager->getInstance(mesh->renderable), true);
-
-				m_gameScene->addEntity(mesh->renderable);
-				it = m_meshesEditor.erase(it);
-			}
-		}
-	
 		t += 0.0002f;		
 		auto& tcm = m_engine->getTransformManager();
 		// math::mat4f transform2 = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(-1, Math::Sin(t) * 2, 0) };
@@ -281,5 +237,83 @@ namespace Lina::Graphics
 		m_eventSys->Disconnect<Event::EWindowResized>(this);
 		m_eventSys->Disconnect<Event::EMeshResourceLoaded>(this);
 		m_eventSys->Disconnect<Event::EMaterialResourceLoaded>(this);
+	}
+
+	void RenderEngineFilament::AddMeshData()
+	{
+		if (m_appInfo->m_appMode == ApplicationMode::Standalone)
+		{
+			if (m_meshesToLoadStandalone.size() == 0) return;
+
+			auto it = m_meshesToLoadStandalone.begin();
+
+			while (it != m_meshesToLoadStandalone.end())
+			{
+				m_standaloneMeshBuffer[it->first] = it->second;
+				m_loadedMeshes.emplace(it->first, filamesh::MeshReader::loadMeshFromBuffer(m_engine, m_standaloneMeshBuffer[it->first].data(), nullptr, nullptr, m_defaultMaterialInstance));
+				filamesh::MeshReader::Mesh* mesh = &m_loadedMeshes[it->first];
+
+				auto ti = m_transformManager->getInstance(mesh->renderable);
+				math::mat4f transform = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(0, 0, 0) };
+				math::mat4f transform2 = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(-1, -1.1f, 0) };
+				m_transformManager->setTransform(ti, transform);
+				m_transformManager->setTransform(ti2, transform2);
+				m_renderableManager->setCastShadows(m_renderableManager->getInstance(mesh->renderable), true);
+
+				m_gameScene->addEntity(mesh->renderable);
+
+				it = m_meshesToLoadStandalone.erase(it);
+			}
+		}
+		else
+		{
+			if (m_meshesToLoadEditor.size() == 0) return;
+
+			auto it = m_meshesToLoadEditor.begin();
+
+			while (it != m_meshesToLoadEditor.end())
+			{
+				utils::Path path = it->second;
+				filamesh::MeshReader::MaterialRegistry reg;
+				reg.registerMaterialInstance(utils::CString("DefaultMaterial"), m_defaultMaterialInstance);
+				m_loadedMeshes.emplace(it->first, filamesh::MeshReader::loadMeshFromFile(m_engine, path, reg));
+				filamesh::MeshReader::Mesh* mesh = &m_loadedMeshes[it->first];
+
+				auto ti = m_transformManager->getInstance(mesh->renderable);
+				math::mat4f transform = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(0, 0, 0) };
+				math::mat4f transform2 = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(-1, -1.1f, 0) };
+				m_transformManager->setTransform(ti, transform);
+				m_transformManager->setTransform(ti2, transform2);
+				m_renderableManager->setCastShadows(m_renderableManager->getInstance(mesh->renderable), true);
+
+				m_gameScene->addEntity(mesh->renderable);
+				it = m_meshesToLoadEditor.erase(it);
+			}
+		}
+	}
+
+	void RenderEngineFilament::AddMaterialData()
+	{
+		if (m_materialBuffer.size() == 0) return;
+
+		auto it = m_materialBuffer.begin();
+		while (it != m_materialBuffer.end())
+		{
+			Material* mat = m_loadedMaterials[it->first] = Material::Builder().package(it->second.data(), it->second.size()).build(*m_engine);
+			it = m_materialBuffer.erase(it);
+
+			std::string s = "Resources/Meshes/monkey.filamesh";
+			StringIDType sid = StringID(s.c_str()).value();
+
+			auto mins = mat->createInstance();
+			mins->setParameter("baseColor", RgbType::LINEAR, filament::math::float3{ 0, 0.0, 0.5 });
+			mins->setParameter("metallic", 1.0f);
+			mins->setParameter("roughness", 1.0f);
+			mins->setParameter("reflectance", 1.0f);
+			m_renderableManager->setMaterialInstanceAt(m_renderableManager->getInstance(m_loadedMeshes[sid].renderable), 0, mins);
+			it = m_materialBuffer.erase(it);
+
+		}
+
 	}
 }

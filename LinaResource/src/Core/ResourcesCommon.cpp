@@ -39,15 +39,18 @@ namespace Lina::Resources
 
 #ifdef LINA_GRAPHICS_FILAMENT
 		{ StringID("filamesh"), ResourceType::Mesh },
-#else
+#endif
 		{ StringID("fbx"), ResourceType::Mesh },
 		{ StringID("obj"), ResourceType::Mesh },
-		{ StringID("3ds"), ResourceType::Mesh },
-#endif
 		{ StringID("wav"), ResourceType::Audio },
 		{ StringID("mp3"), ResourceType::Audio },
 		{ StringID("ogg"), ResourceType::Audio },
+
+#ifdef LINA_GRAPHICS_FILAMENT
+		{ StringID("filamat"), ResourceType::Material },
+#elif
 		{ StringID("linamat"), ResourceType::Material },
+#endif
 		{ StringID("vert"), ResourceType::GLSLVertex },
 		{ StringID("geo"), ResourceType::GLSLGeo },
 		{ StringID("frag"), ResourceType::GLSLFrag },

@@ -118,7 +118,6 @@ target_link_libraries(${PROJECT_NAME}
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/bluevk.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/filabridge.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/filaflat.lib
-	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/filamat_lite.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/utils.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/geometry.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/meshoptimizer.lib

@@ -44,9 +44,9 @@ namespace Lina::Resources
 #ifdef LINA_GRAPHICS_FILAMENT
 		Event::EMeshResourceLoaded e = Event::EMeshResourceLoaded();
 		e.m_sid = m_sid;
-		//std::memcpy(e.m_data, buffer, bufferSize);
 		e.m_data = std::vector(buffer, buffer + bufferSize);
 		eventSys->Trigger<Event::EMeshResourceLoaded>(e);
+		LINA_TRACE("[Mesh Loader] -> Mesh loaded from memory.");
 		return true;
 #else
 		// Get the importer & set assimp scene.
@@ -71,19 +71,26 @@ namespace Lina::Resources
 
 	bool MeshResource::LoadFromFile(const std::string& path, Event::EventSystem* eventSys)
 	{
+		if (FileUtility::GetFileExtension(path).compare("filamesh") == 0) return false;
 #ifdef LINA_GRAPHICS_FILAMENT
 
 		std::string fileName = FileUtility::RemoveExtensionFromFileName(FileUtility::GetFileName(path));
 		std::string dir = FileUtility::GetFileDirectory(path);
-		std::string filaMeshPath = dir + "/" + fileName + ".filamesh ";
+		std::string filaMeshPath = dir + "/" + fileName + ".filamesh";
 		std::string cmd = "filament\\filamesh.exe " + path + " " + filaMeshPath;
 		system(cmd.c_str());
 
-		if (!FileUtility::FileExists(filaMeshPath)) return false;
+		if (!FileUtility::FileExists(filaMeshPath))
+		{
+			LINA_ERR("[Mesh Loader] -> Mesh loading failed, filamesh can not be found: {0}", path.c_str());
+			return false;
+		}
+
+		LINA_TRACE("[Mesh Loader] -> Mesh loaded from file: {0}", path);
 
 		// Trigger event w/ data
 		Event::EMeshResourceLoaded e = Event::EMeshResourceLoaded();
-		e.m_sid = StringID(path.c_str()).value();
+		e.m_sid = StringID(filaMeshPath.c_str()).value();
 		e.m_path = filaMeshPath;
 		eventSys->Trigger<Event::EMeshResourceLoaded>(e);
 		return true;
