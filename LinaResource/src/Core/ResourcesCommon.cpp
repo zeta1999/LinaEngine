@@ -36,9 +36,14 @@ namespace Lina::Resources
 		{ StringID("jpg"), ResourceType::Image },
 		{ StringID("jpeg"), ResourceType::Image },
 		{ StringID("tga"), ResourceType::Image },
+
+#ifdef LINA_GRAPHICS_FILAMENT
+		{ StringID("filamesh"), ResourceType::Mesh },
+#else
 		{ StringID("fbx"), ResourceType::Mesh },
 		{ StringID("obj"), ResourceType::Mesh },
 		{ StringID("3ds"), ResourceType::Mesh },
+#endif
 		{ StringID("wav"), ResourceType::Audio },
 		{ StringID("mp3"), ResourceType::Audio },
 		{ StringID("ogg"), ResourceType::Audio },

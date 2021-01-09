@@ -75,7 +75,7 @@ namespace Lina::Resources
 			// For every resource in this package, 
 			for (auto& resource : rawPackage)
 			{
-				// InitializeVulkan the corresponding package class from memory.
+				// Initialize the corresponding package class from memory.
 				if (package.first == ResourceType::Image)
 				{
 					ImageResource* img = new ImageResource();

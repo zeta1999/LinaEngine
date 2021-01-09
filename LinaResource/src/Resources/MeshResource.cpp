@@ -41,6 +41,14 @@ namespace Lina::Resources
 	
 	bool MeshResource::LoadFromMemory(StringIDType m_sid, unsigned char* buffer, size_t bufferSize, Event::EventSystem* eventSys)
 	{
+#ifdef LINA_GRAPHICS_FILAMENT
+		Event::EMeshResourceLoaded e = Event::EMeshResourceLoaded();
+		e.m_sid = m_sid;
+		//std::memcpy(e.m_data, buffer, bufferSize);
+		e.m_data = std::vector(buffer, buffer + bufferSize);
+		eventSys->Trigger<Event::EMeshResourceLoaded>(e);
+		return true;
+#else
 		// Get the importer & set assimp scene.
 		Assimp::Importer importer;
 		uint32_t importFlags = 0;
@@ -58,6 +66,7 @@ namespace Lina::Resources
 
 		LINA_TRACE("[Mesh Loader] -> Mesh loaded from memory.");
 		return true;
+#endif
 	}
 
 	bool MeshResource::LoadFromFile(const std::string& path, Event::EventSystem* eventSys)

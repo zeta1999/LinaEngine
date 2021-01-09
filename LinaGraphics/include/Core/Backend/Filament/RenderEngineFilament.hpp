@@ -45,6 +45,8 @@ Timestamp: 1/7/2021 1:32:01 PM
 #include "EventSystem/Events.hpp"
 #include "WindowFilament.hpp"
 #include <unordered_map>
+#include <set>
+#include <filameshio/MeshReader.h>
 
 
 namespace Lina
@@ -71,6 +73,7 @@ namespace filament
 	class TransformManager;
 	class RenderableManager;
 };
+
 
 namespace utils
 {
@@ -102,6 +105,7 @@ namespace Lina::Graphics
 		void OnPostMainLoop(Event::EPostMainLoop& e);
 		void OnWindowResize(Event::EWindowResized& e);
 		void OnMeshResourceLoaded(Event::EMeshResourceLoaded& e);
+		void OnMaterialResourceLoaded(Event::EMaterialResourceLoaded& e);
 		void Tick();
 		void Render();
 		void DisconnectEvents();
@@ -113,16 +117,20 @@ namespace Lina::Graphics
 		ECS::Registry* m_ecs = nullptr;
 		Resources::ResourceManager* m_resources = nullptr;
 		WindowFilament m_window;
-		filament::Engine* m_engine;
-		filament::SwapChain* m_swapchain;
-		filament::Renderer* m_renderer;
-		filament::Camera* m_gameCamera;
-		filament::View* m_gameView;
-		filament::Scene* m_gameScene;
-		filament::TransformManager* m_transformManager;
-		filament::RenderableManager* m_renderableManager;
-		utils::EntityManager* m_entityManager;
-		std::unordered_map<StringIDType, std::string> m_meshBuffers;
+		filament::Engine* m_engine = nullptr;
+		filament::SwapChain* m_swapchain = nullptr;
+		filament::Renderer* m_renderer = nullptr;
+		filament::Camera* m_gameCamera = nullptr;
+		filament::View* m_gameView = nullptr;
+		filament::Scene* m_gameScene = nullptr;
+		filament::TransformManager* m_transformManager = nullptr;
+		filament::RenderableManager* m_renderableManager = nullptr;
+		utils::EntityManager* m_entityManager = nullptr;
+		std::unordered_map < StringIDType, std::vector<unsigned char>> m_meshesStandalone;
+		std::unordered_map < StringIDType, std::vector<unsigned char>> m_standaloneMeshBuffer;
+		std::unordered_map < StringIDType, std::string> m_meshesEditor;
+		std::unordered_map<StringIDType, filamesh::MeshReader::Mesh> m_loadedMeshes;
+		ApplicationInfo* m_appInfo = nullptr;
 	};
 }
 

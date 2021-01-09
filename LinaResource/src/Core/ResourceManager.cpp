@@ -91,6 +91,7 @@ namespace Lina::Resources
 		m_activeLevel.AddUsedResource("Resources/test.wav");
 		m_activeLevel.AddUsedResource("Resources/Shaders/frag.spv");
 		m_activeLevel.AddUsedResource("Resources/Shaders/vert.spv");
+		m_activeLevel.AddUsedResource("Resources/monkey.filamesh");
 
 		// If we are in editor, fill our resource bundle with all the files imported in the project's Resources directory.
 		if (m_appMode == ApplicationMode::Editor || m_appMode == ApplicationMode::EditorGame)

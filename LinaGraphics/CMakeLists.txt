@@ -18,17 +18,17 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if(NOT EXISTS ${CMAKE_SOURCE_DIR}/vendor/filament)
-	if(NOT EXISTS ${CMAKE_SOURCE_DIR}/vendor/filament.rar)
+	if(NOT EXISTS ${CMAKE_SOURCE_DIR}/vendor/filament.zip)
 		message("Downloading filament dependencies...")
-		file(DOWNLOAD https://github.com/inanevin/LinaEngine/releases/download/v1.0/filament.rar ${CMAKE_SOURCE_DIR}/vendor/filament.rar SHOW_PROGRESS
+		file(DOWNLOAD https://github.com/inanevin/LinaEngine/releases/download/v1.0/filament.zip ${CMAKE_SOURCE_DIR}/vendor/filament.zip SHOW_PROGRESS
 		TLS_VERIFY ON)
 	endif()
 endif()
 
 if(NOT EXISTS ${CMAKE_SOURCE_DIR}/vendor/filament)
 	message("Extracting filament dependencies...")
-	file(ARCHIVE_EXTRACT INPUT ${CMAKE_SOURCE_DIR}/vendor/filament.rar DESTINATION ${CMAKE_SOURCE_DIR}/vendor/)
-	file(REMOVE INPUT ${CMAKE_SOURCE_DIR}/vendor/filament.rar)
+	file(ARCHIVE_EXTRACT INPUT ${CMAKE_SOURCE_DIR}/vendor/filament.zip DESTINATION ${CMAKE_SOURCE_DIR}/vendor/)
+	file(REMOVE INPUT ${CMAKE_SOURCE_DIR}/vendor/filament.zip)
 endif()
 
 #--------------------------------------------------------------------
@@ -118,6 +118,7 @@ target_link_libraries(${PROJECT_NAME}
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/bluevk.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/filabridge.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/filaflat.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/filamat_lite.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/utils.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/geometry.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/meshoptimizer.lib

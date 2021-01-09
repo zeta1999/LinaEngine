@@ -29,6 +29,8 @@ SOFTWARE.
 #include "Resources/MaterialResource.hpp"
 #include "Utility/FileUtility.hpp"
 #include "Core/Log.hpp"
+#include "EventSystem/EventSystem.hpp"
+#include "EventSystem/Events.hpp"
 #include <fstream>
 #include <cereal/archives/portable_binary.hpp>
 
@@ -37,6 +39,12 @@ namespace Lina::Resources
 
     bool MaterialResource::LoadFromFile(const std::string& path, Event::EventSystem* eventSys)
     {
+#ifdef LINA_GRAPHICS_FILAMENT
+
+        // Trigger event w/ data
+        eventSys->Trigger<Event::EMaterialResourceLoaded>({ StringID(path.c_str()).value(), path });
+        return true;
+#else
         // LoadFromFile the level file if exists.
         if (FileUtility::FileExists(path))
         {
@@ -56,6 +64,7 @@ namespace Lina::Resources
 
         LINA_TRACE("[Material Loader] -> Material loaded from file: {0}", path);
         return true;
+#endif
     }
 
     bool MaterialResource::LoadFromMemory(StringIDType m_sid, unsigned char* buffer, size_t bufferSize, Event::EventSystem* eventSys)

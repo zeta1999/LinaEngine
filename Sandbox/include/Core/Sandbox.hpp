@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 	Lina::ApplicationInfo appInfo;
 	appInfo.m_windowProperties.m_width = 800;
 	appInfo.m_windowProperties.m_height = 600;
-	appInfo.m_appMode = Lina::ApplicationMode::Editor;
+	appInfo.m_appMode = Lina::ApplicationMode::Standalone;
 	app.Startup(appInfo);
 	return 0;
 
