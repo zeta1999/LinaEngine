@@ -50,6 +50,7 @@ int main(int argc, char** argv)
 	appInfo.m_appMode = Lina::ApplicationMode::Editor;
 	app.Startup(appInfo);
 	return 0;
+
 }
 
 class Sandbox

@@ -50,8 +50,8 @@ namespace Lina
 		// Set references to engine systems.
 		m_engine.SetReferences(&m_eventSystem);
 		m_audioEngine.SetReferences(&m_eventSystem, &m_ecs, appInfo.m_appMode);
-		m_inputEngine.SetReferences(&m_eventSystem, &m_ecs);
 		m_renderEngine.SetReferences(&m_eventSystem, &m_ecs, &m_resourceManager);
+		m_inputEngine.SetReferences(&m_eventSystem, &m_ecs);
 		m_physicsEngine.SetReferences(&m_eventSystem, &m_ecs);
 		m_resourceManager.SetReferences(&m_eventSystem, &m_ecs);
 

@@ -30,6 +30,8 @@ SOFTWARE.
 #include "EventSystem/Events.hpp"
 #include "EventSystem/EventSystem.hpp"
 #include "Core/Log.hpp"
+#include "Utility/FileUtility.hpp"
+#include <fstream>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -60,6 +62,23 @@ namespace Lina::Resources
 
 	bool MeshResource::LoadFromFile(const std::string& path, Event::EventSystem* eventSys)
 	{
+#ifdef LINA_GRAPHICS_FILAMENT
+
+		std::string fileName = FileUtility::RemoveExtensionFromFileName(FileUtility::GetFileName(path));
+		std::string dir = FileUtility::GetFileDirectory(path);
+		std::string filaMeshPath = dir + "/" + fileName + ".filamesh ";
+		std::string cmd = "filament\\filamesh.exe " + path + " " + filaMeshPath;
+		system(cmd.c_str());
+
+		if (!FileUtility::FileExists(filaMeshPath)) return false;
+
+		// Trigger event w/ data
+		Event::EMeshResourceLoaded e = Event::EMeshResourceLoaded();
+		e.m_sid = StringID(path.c_str()).value();
+		e.m_path = filaMeshPath;
+		eventSys->Trigger<Event::EMeshResourceLoaded>(e);
+		return true;
+#else
 		// Get the importer & set assimp scene.
 		Assimp::Importer importer;
 		uint32_t importFlags = 0;
@@ -77,6 +96,7 @@ namespace Lina::Resources
 
 		LINA_TRACE("[Mesh Loader] -> Mesh loaded from file: {0}", path);
 		return true;
+#endif
 	}
 
 }

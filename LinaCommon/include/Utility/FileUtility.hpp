@@ -74,6 +74,7 @@ namespace Lina::FileUtility
 	extern std::string RemoveExtensionFromFileName(const std::string& filename);
 	extern std::string OpenFile(const std::string& filter, void* window);
 	extern std::string SaveFile(const std::string& filter, void* window);
+	extern std::string GetFileDirectory(const std::string& path);
 }
 
 #endif

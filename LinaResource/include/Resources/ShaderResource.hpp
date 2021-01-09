@@ -59,7 +59,8 @@ namespace Lina::Resources
 
 #ifdef LINA_GRAPHICS_VULKAN
 		const std::vector<uint32_t>& GetData() { return m_data; }
-#elif
+#elif LINA_GRAPHICS_FILAMENT
+		const std::vector<uint32_t>& GetData() { return m_data; }
 #endif
 
 	private:
@@ -78,7 +79,8 @@ namespace Lina::Resources
 
 #ifdef LINA_GRAPHICS_VULKAN
 		std::vector<uint32_t> m_data;
-#elif
+#elif LINA_GRAPHICS_FILAMENT
+		std::vector<uint32_t> m_data;
 #endif
 	};
 }

@@ -42,6 +42,7 @@ Timestamp: 12/19/2020 2:28:46 AM
 
 // Headers here.
 #include "Utility/StringId.hpp"
+#include "Core/MacroDetection.hpp"
 #include <linaresource_export.h>
 
 namespace Lina

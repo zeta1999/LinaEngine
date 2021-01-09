@@ -41,12 +41,16 @@ Timestamp: 12/22/2020 6:00:28 PM
 
 #ifdef LINA_GRAPHICS_VULKAN
 #include "Core/Backend/Vulkan/RenderEngineVulkan.hpp"
+#elif LINA_GRAPHICS_FILAMENT
+#include "Core/Backend/Filament/RenderEngineFilament.hpp"
 #endif
 
 namespace Lina::Graphics
 {
 #ifdef LINA_GRAPHICS_VULKAN
 	typedef RenderEngineVulkan RenderEngineBackend;
+#elif LINA_GRAPHICS_FILAMENT
+	typedef RenderEngineFilament RenderEngineBackend;
 #endif
 }
 

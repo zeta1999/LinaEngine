@@ -39,14 +39,18 @@ Timestamp: 12/22/2020 6:28:36 PM
 #ifndef WindowBackend_HPP
 #define WindowBackend_HPP
 
-#ifdef LINA_WINDOW_GLFW
+#ifdef LINA_GRAPHICS_GLFW
 #include "Core/Backend/Vulkan/WindowVulkan.hpp"
+#elif LINA_GRAPHICS_FILAMENT
+#include "Core/Backend/Filament/WindowFilament.hpp"
 #endif
 
 namespace Lina::Graphics
 {
-#ifdef LINA_WINDOW_GLFW
+#ifdef LINA_GRAPHICS_GLFW
 	typedef WindowVulkan WindowBackend;
+#elif LINA_GRAPHICS_FILAMENT
+	typedef WindowFilament WindowBackend;
 #endif
 }
 

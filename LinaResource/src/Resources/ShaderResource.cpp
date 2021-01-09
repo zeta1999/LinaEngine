@@ -48,7 +48,8 @@ namespace Lina::Resources
 		m_data = std::vector<uint32_t>(intbuf, intbuf + charbuf.size());
 		LINA_TRACE("[Shader Loader] -> Shader loaded from memory.");
 		return true;
-#elif
+#else
+		return false;
 #endif
 	}
 
@@ -64,7 +65,7 @@ namespace Lina::Resources
 		}
 
 		return false;
-#elif
+#else
 		std::ifstream file(path, std::ios::ate | std::ios::binary);
 
 		if (!file.is_open())
@@ -76,7 +77,7 @@ namespace Lina::Resources
 		// Store resource data.
 		size_t fileSize = (size_t)file.tellg();
 		file.seekg(0);
-		file.read(m_textData.data(), fileSize);
+		//file.read(m_data.data(), fileSize);
 		return true;
 #endif
 

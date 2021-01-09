@@ -50,6 +50,7 @@ namespace Lina
 		int updates = 0;
 		int frames = 0;
 		double lastCountTime = 0;
+		double lastRendered = lastTime;
 		while (m_isRunning)
 		{
 			PROFILER_FUNC();
@@ -57,7 +58,7 @@ namespace Lina
 			// Calculate elapsed, raw delta and smoothed delta time.
 			double currentGameTime = Utility::GetCPUTime() - m_gameStartTime;
 			double gameTimeDiff = currentGameTime - m_gameTime;
-
+		 
 			// Prevent spikes & break points from affecting game time.
 			if (gameTimeDiff > 0.2f)
 				m_gameStartTime += gameTimeDiff;
@@ -79,7 +80,12 @@ namespace Lina
 			m_eventSys->Trigger<Event::EPreTick>(Event::EPreTick{ (float)m_deltaTime, true });
 			m_eventSys->Trigger<Event::ETick>(Event::ETick{ (float)m_deltaTime, true });
 			m_eventSys->Trigger<Event::EPostTick>(Event::EPostTick{ (float)m_deltaTime, true });
-			m_eventSys->Trigger<Event::ERender>();
+
+			if (m_gameTime - lastRendered > 0.016f)
+			{
+				lastRendered = m_gameTime;
+				m_eventSys->Trigger<Event::ERender>();
+			}
 
 			// Calculate updates & frames per second.
 			frames++;

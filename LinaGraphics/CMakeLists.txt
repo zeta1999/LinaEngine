@@ -17,6 +17,20 @@ project(LinaGraphics)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/vendor/filament)
+	if(NOT EXISTS ${CMAKE_SOURCE_DIR}/vendor/filament.rar)
+		message("Downloading filament dependencies...")
+		file(DOWNLOAD https://github.com/inanevin/LinaEngine/releases/download/v1.0/filament.rar ${CMAKE_SOURCE_DIR}/vendor/filament.rar SHOW_PROGRESS
+		TLS_VERIFY ON)
+	endif()
+endif()
+
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/vendor/filament)
+	message("Extracting filament dependencies...")
+	file(ARCHIVE_EXTRACT INPUT ${CMAKE_SOURCE_DIR}/vendor/filament.rar DESTINATION ${CMAKE_SOURCE_DIR}/vendor/)
+	file(REMOVE INPUT ${CMAKE_SOURCE_DIR}/vendor/filament.rar)
+endif()
+
 #--------------------------------------------------------------------
 # Set sources
 #--------------------------------------------------------------------
@@ -32,6 +46,11 @@ set (LINAGRAPHICS_SOURCES
 	src/Core/Backend/Vulkan/Objects/VulkanLogicalDevice.cpp	
 	
 	src/Core/Backend/Vulkan/Utility/VulkanFunctions.cpp
+
+	src/Core/Backend/Filament/WindowFilament.cpp
+	src/Core/Backend/Filament/RenderEngineFilament.cpp
+	include/Core/Backend/Filament/MaterialResources/materialresources.c
+	include/Core/Backend/Filament/MaterialResources/monkey.c
 
 )
 
@@ -56,6 +75,10 @@ set(LINAGRAPHICS_HEADERS
 	include/Core/Backend/Vulkan/Objects/VulkanSwapchain.hpp
 	include/Core/Backend/Vulkan/Objects/VulkanLogicalDevice.hpp
 	
+	include/Core/Backend/Filament/WindowFilament.hpp
+	include/Core/Backend/Filament/RenderEngineFilament.hpp
+	include/Core/Backend/Filament/MaterialResources/materialresources.h
+	include/Core/Backend/Filament/MaterialResources/monkey.h
 
 
 	include/linagraphics_export.h
@@ -77,6 +100,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/vendor/glfw/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/vendor/vulkan/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/LinaCommon/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/LinaResource/include)
 
@@ -87,6 +111,22 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/LinaResour
 
 target_link_libraries(${PROJECT_NAME} 
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/glfw/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/glfw3dll.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/filament.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/filameshio.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/backend.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/bluegl.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/bluevk.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/filabridge.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/filaflat.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/utils.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/geometry.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/meshoptimizer.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/smol-v.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/ibl.lib
+	PUBLIC gdi32.lib
+	PUBLIC shlwapi.lib
+	PUBLIC user32.lib
+	PUBLIC opengl32.lib
 	PRIVATE Lina::Common
 	PRIVATE Lina::Resource
 )
