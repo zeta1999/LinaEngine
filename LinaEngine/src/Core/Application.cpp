@@ -67,6 +67,11 @@ namespace Lina
 
 		m_eventSystem.Trigger<Event::EAppLoad>({&m_appInfo});
 
+	
+	}
+
+	void Application::Run(ApplicationInfo appInfo)
+	{	
 		// Wait for resource manager before running the main loop.
 		Resources::ResourceProgressData& progData = m_resourceManager.GetCurrentProgressData();
 		static float timer = 0.0f;

@@ -55,7 +55,7 @@ namespace Lina::Editor
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 
 		// Add default font.
-		io.Fonts->AddFontFromFileTTF("resources/editor/fonts/Mukta-Medium.ttf", 20.0f, NULL);
+		io.Fonts->AddFontFromFileTTF("Resources/Editor/Fonts/Mukta-Medium.ttf", 20.0f, NULL);
 
 		// merge in icons from Font Awesome
 		static const ImWchar icons_rangesFA[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
@@ -66,9 +66,9 @@ namespace Lina::Editor
 		icons_config.MergeMode = true;
 		icons_config.PixelSnapH = true;
 
-		io.Fonts->AddFontFromFileTTF("resources/editor/fonts/FontAwesome/fa-solid-900.ttf", 20.0f, &icons_config, icons_rangesFA);
-		io.Fonts->AddFontFromFileTTF("resources/editor/fonts/ForkAwesome/forkawesome-webfont.ttf", 30.0f, &icons_config, icons_rangesFK);
-		io.Fonts->AddFontFromFileTTF("resources/editor/fonts/MaterialIcons/MaterialIcons-Regular.ttf", 30.0f, &icons_config, icons_rangesMD);
+		io.Fonts->AddFontFromFileTTF("Resources/Editor/Fonts/FontAwesome/fa-solid-900.ttf", 20.0f, &icons_config, icons_rangesFA);
+		io.Fonts->AddFontFromFileTTF("Resources/Editor/Fonts/ForkAwesome/forkawesome-webfont.ttf", 30.0f, &icons_config, icons_rangesFK);
+		io.Fonts->AddFontFromFileTTF("Resources/Editor/Fonts/MaterialIcons/MaterialIcons-Regular.ttf", 30.0f, &icons_config, icons_rangesMD);
 
 		// Setup configuration flags.
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -76,9 +76,6 @@ namespace Lina::Editor
 
 		GLFWwindow* window = static_cast<GLFWwindow*>(Lina::g_env.g_render->GetWindow().GetWindowPointer());
 
-		// Setup Platform/Renderer bindings
-		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init();
 
 		// Setup Dear ImGui style
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -155,8 +152,7 @@ namespace Lina::Editor
 	void EditorApplication::Render()
 	{	
 		//Setup
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
+	
 		ImGui::NewFrame();
 
 
@@ -164,6 +160,5 @@ namespace Lina::Editor
 
 		// Rendering
 		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 }

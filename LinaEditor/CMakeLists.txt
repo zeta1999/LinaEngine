@@ -144,11 +144,11 @@ COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/LinaEngine/Resou
 add_custom_command(
 TARGET ${PROJECT_NAME}
 POST_BUILD
-COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Sandbox/Resources" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/Resources")
+COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/LinaEditor/Resources" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/Resources")
 
 # Copy project resources to project solution directory to run within IDE.
 add_custom_command(
 TARGET ${PROJECT_NAME}
 POST_BUILD
-COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Sandbox/Resources" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Resources/")
+COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/LinaEditor/Resources" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Resources/")
 

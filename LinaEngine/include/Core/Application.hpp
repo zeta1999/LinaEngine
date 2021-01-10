@@ -63,8 +63,8 @@ namespace Lina
 		Application() {};
 		~Application() {};
 
-		void Startup(ApplicationInfo appInfo = ApplicationInfo());
-
+		void Startup(ApplicationInfo appInfo);
+		void Run(ApplicationInfo appInfo);
 	private:
 
 		// Callbacks.

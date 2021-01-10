@@ -137,7 +137,7 @@ namespace Lina::Graphics
 		m_gameCamera->setExposure(100.0f);
 		m_gameCamera->setProjection(90.0f, aspect, 0.1f, 1000.0f);
 		m_gameCamera->lookAt({ 0, 0, -10 }, { 0, 0, 0 }, { 0, 1, 0 });
-		m_gameView->setViewport({ 0, 0, 800, 600 });
+		m_gameView->setViewport({ 0, 0, (uint32_t)e.m_appInfo->m_windowProperties.m_width, (uint32_t)e.m_appInfo->m_windowProperties.m_height });
 		m_gameView->setScene(m_gameScene);
 		m_gameView->setCamera(m_gameCamera); /* When we don't set the camera we run into a segfault. */
 		m_gameView->setName("game-view");
