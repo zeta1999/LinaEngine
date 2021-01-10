@@ -175,9 +175,7 @@ namespace Lina::Graphics
 
 	void WindowFilament::SwapBuffers()
 	{
-		glfwWaitEventsTimeout(0.016f);
 		
-		//glfwSwapBuffers(m_glfwWindow);
 	}
 
 #ifdef LINA_WINDOWS

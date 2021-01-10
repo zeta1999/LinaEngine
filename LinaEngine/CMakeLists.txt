@@ -25,6 +25,7 @@ set (LINAENGINE_SOURCES
 	# CORE
     src/Core/Application.cpp
     src/Core/Engine.cpp
+    src/Core/Environment.cpp
 )
 
 #--------------------------------------------------------------------
@@ -35,6 +36,7 @@ set(LINAENGINE_HEADERS
 	include/Core/Application.hpp
 	include/Core/EngineCommon.hpp
 	include/Core/Engine.hpp
+	include/Core/Environment.hpp
 	
 	#Others
 	include/LinaPch.hpp

@@ -90,11 +90,14 @@ namespace Lina::Graphics
 		{
 			glfwPollEvents();
 		}
+
+	public:
+
+
 #ifdef LINA_WINDOWS
 		HWND GetNativeWindow();
 #endif
-		void* GetWindow() { return (void*)m_glfwWindow; }
-	public:
+		void* GetWindowPointer() { return (void*)m_glfwWindow; }
 
 		// Enables/Disables Vsync.
 		void SetVsync(bool enable);

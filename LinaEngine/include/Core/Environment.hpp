@@ -1,6 +1,6 @@
-/*
-This file is a part of: Lina AudioEngine
-https://github.com/inanevin/Lina
+/* 
+This file is a part of: Lina Engine
+https://github.com/inanevin/LinaEngine
 
 Author: Inan Evin
 http://www.inanevin.com
@@ -27,20 +27,19 @@ SOFTWARE.
 */
 
 /*
-Class: Application
+Class: Environment
 
-Central application class, responsible for managing all the engines like input, physics, rendering etc.
-as well as defining the game loop.
 
-Timestamp: 12/29/2018 10:43:46 PM
+
+Timestamp: 1/10/2021 2:49:34 PM
 */
 
 #pragma once
-#ifndef Lina_Application_HPP
-#define Lina_Application_HPP
 
-#include "Core/Common.hpp"
-#include "Engine.hpp"
+#ifndef Environment_HPP
+#define Environment_HPP
+
+// Headers here.
 #include "EventSystem/Events.hpp"
 #include "EventSystem/EventSystem.hpp"
 #include "Core/InputBackend.hpp"
@@ -49,40 +48,24 @@ Timestamp: 12/29/2018 10:43:46 PM
 #include "Core/WindowBackend.hpp"
 #include "Core/PhysicsBackend.hpp"
 #include "Core/ResourceManager.hpp"
-#include "ECS/ECS.hpp"
+#include "Engine.hpp"
 #include <linaengine_export.h>
 
 namespace Lina
 {
-	
-	class Application 
+	struct AppEnvironment
 	{
-
-	public:
-	
-		Application() {};
-		~Application() {};
-
-		void Startup(ApplicationInfo appInfo = ApplicationInfo());
-
-	private:
-
-		// Callbacks.
-		void OnLog(Event::ELog dump);
-
-	private:
-
-		Event::EventSystem m_eventSystem;
-		ECS::Registry m_ecs;
-		Engine m_engine;
-		Graphics::RenderEngineBackend m_renderEngine;
-		Resources::ResourceManager m_resourceManager;
-		Input::InputEngineBackend m_inputEngine;
-		Physics::PhysicsEngineBackend m_physicsEngine;
-		Audio::AudioEngineBackend m_audioEngine;
-		ApplicationInfo m_appInfo;
+		Engine* g_engine = nullptr;
+		Event::EventSystem* g_eventSystem = nullptr;
+		ECS::Registry* g_ecs = nullptr;
+		Graphics::RenderEngineBackend* g_render = nullptr;
+		Resources::ResourceManager* g_resources = nullptr;
+		Input::InputEngineBackend* g_input = nullptr;
+		Physics::PhysicsEngineBackend* g_physics = nullptr;
+		Audio::AudioEngineBackend* g_audio = nullptr;
 	};
-};
-
+	
+	extern LINAENGINE_EXPORT AppEnvironment g_env;
+}
 
 #endif

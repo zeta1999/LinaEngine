@@ -76,6 +76,7 @@ add_definitions(-DLINA_VPATCH=0)
 
 add_subdirectory(LinaCommon)
 add_subdirectory(LinaPhysics)
+add_subdirectory(LinaEditor)
 add_subdirectory(LinaGraphics)
 add_subdirectory(LinaInput)
 add_subdirectory(LinaEngine)

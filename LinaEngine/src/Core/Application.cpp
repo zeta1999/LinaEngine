@@ -31,13 +31,23 @@ SOFTWARE.
 #include "Core/Log.hpp"
 #include "Profiling/Profiler.hpp"
 #include "Core/MacroDetection.hpp"
-
+#include "Core/Environment.hpp"
 
 namespace Lina
 {
+
 	void Application::Startup(ApplicationInfo appInfo)
 	{
 		m_appInfo = appInfo;
+		g_env.g_engine = &m_engine;
+		g_env.g_audio = &m_audioEngine;
+		g_env.g_ecs = &m_ecs;
+		g_env.g_eventSystem = &m_eventSystem;
+		g_env.g_input = &m_inputEngine;
+		g_env.g_physics = &m_physicsEngine;
+		g_env.g_render = &m_renderEngine;
+		g_env.g_resources = &m_resourceManager;
+
 		Log::s_onLogSink.connect<&Application::OnLog>(this);
 
 		// Register callbacks.

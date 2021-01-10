@@ -88,6 +88,8 @@ namespace Lina::Graphics
 		
 	public:
 		
+		WindowFilament& GetWindow() { return m_window; }
+
 	private:
 
 		friend class Application;
