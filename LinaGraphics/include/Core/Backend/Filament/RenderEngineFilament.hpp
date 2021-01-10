@@ -89,6 +89,9 @@ namespace Lina::Graphics
 	public:
 		
 		WindowFilament& GetWindow() { return m_window; }
+		inline filament::Engine* GetEngine() { return m_engine; }
+		inline filament::View* GetGameView() { return m_gameView; }
+		inline filament::View* GetUIView() { return m_uiView; }
 
 	private:
 
@@ -126,7 +129,9 @@ namespace Lina::Graphics
 		filament::SwapChain* m_swapchain = nullptr;
 		filament::Renderer* m_renderer = nullptr;
 		filament::Camera* m_gameCamera = nullptr;
+		filament::Camera* m_uiCamera = nullptr;
 		filament::View* m_gameView = nullptr;
+		filament::View* m_uiView = nullptr;
 		filament::Scene* m_gameScene = nullptr;
 		filament::TransformManager* m_transformManager = nullptr;
 		filament::RenderableManager* m_renderableManager = nullptr;

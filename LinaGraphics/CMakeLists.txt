@@ -49,9 +49,18 @@ set (LINAGRAPHICS_SOURCES
 
 	src/Core/Backend/Filament/WindowFilament.cpp
 	src/Core/Backend/Filament/RenderEngineFilament.cpp
-	include/Core/Backend/Filament/MaterialResources/materialresources.c
-	include/Core/Backend/Filament/MaterialResources/monkey.c
 
+	include/Core/Backend/Filament/MaterialResources/materialresources.c
+	
+	src/Core/Backend/Filament/filagui/ImGuiHelper.cpp
+	src/Core/Backend/Filament/filagui/ImGuiExtensions.cpp
+	src/Core/Backend/Filament/filagui/filagui.c
+	
+	# ImGui
+	src/Core/Backend/Filament/imgui/imgui.cpp
+	src/Core/Backend/Filament/imgui/imgui_demo.cpp
+	src/Core/Backend/Filament/imgui/imgui_draw.cpp
+	src/Core/Backend/Filament/imgui/imgui_widgets.cpp
 )
 
 #--------------------------------------------------------------------
@@ -78,9 +87,22 @@ set(LINAGRAPHICS_HEADERS
 	include/Core/Backend/Filament/WindowFilament.hpp
 	include/Core/Backend/Filament/RenderEngineFilament.hpp
 	include/Core/Backend/Filament/MaterialResources/materialresources.h
-	include/Core/Backend/Filament/MaterialResources/monkey.h
 
-
+	include/Core/Backend/Filament/filagui/ImGuiExtensions.h
+	include/Core/Backend/Filament/filagui/ImGuiHelper.h
+	include/Core/Backend/Filament/filagui/ImGuiMath.h
+	include/Core/Backend/Filament/filagui/filagui.h
+			
+	# ImGui
+	include/Core/Backend/Filament/imgui/dirent.h
+	include/Core/Backend/Filament/imgui/imconfig.h
+	include/Core/Backend/Filament/imgui/imgui.h
+	include/Core/Backend/Filament/imgui/imgui_internal.h
+	include/Core/Backend/Filament/imgui/imstb_rectpack.h
+	include/Core/Backend/Filament/imgui/imstb_textedit.h
+	include/Core/Backend/Filament/imgui/imstb_truetype.h
+	
+	
 	include/linagraphics_export.h
 )	
 

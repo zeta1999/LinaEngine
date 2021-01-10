@@ -25,22 +25,8 @@ set (LINAEDITOR_SOURCES
 
 	#Input
 	src/Core/EditorApplication.cpp
-	
-	# ImGui
-	src/imgui/imgui_impl_opengl3.cpp
-	src/imgui/imgui_impl_glfw.cpp
-	src/imgui/imgui.cpp
-	src/imgui/imgui_demo.cpp
-	src/imgui/imgui_draw.cpp
-	src/imgui/imgui_widgets.cpp
-	src/imgui/imguizmo/ImCurveEdit.cpp
-	src/imgui/imguizmo/ImGradient.cpp
-	src/imgui/imguizmo/ImGuizmo.cpp
-	src/imgui/imguizmo/ImSequencer.cpp
-	src/imgui/ImGuiFileDialogue/ImGuiFileDialog.cpp
-	src/imgui/implot/implot_demo.cpp
-	src/imgui/implot/implot.cpp
-	src/imgui/implot/implot_items.cpp
+
+
 )
 
 #--------------------------------------------------------------------
@@ -51,25 +37,9 @@ set(LINAEDITOR_HEADERS
 	# include/linaeditor_export.h
 	#Input
 	include/Core/EditorApplication.hpp
+
 	
-	# ImGui
-	include/imgui/dirent.h
-	include/imgui/imconfig.h
-	include/imgui/imgui.h
-	include/imgui/imgui_impl_glfw.h
-	include/imgui/imgui_impl_opengl3.h
-	include/imgui/imgui_internal.h
-	include/imgui/imstb_rectpack.h
-	include/imgui/imstb_textedit.h
-	include/imgui/imstb_truetype.h
-	include/imgui/imguizmo/ImCurveEdit.h
-	include/imgui/imguizmo/ImGradient.h
-	include/imgui/imguizmo/ImGuizmo.h
-	include/imgui/imguizmo/ImSequencer.h
-	include/imgui/ImGuiFileDialogue/ImGuiFileDialog.h
-	include/imgui/ImGuiFileDialogue/ImGuiFileDialogConfig.h
-	include/imgui/implot/implot.h
-	include/imgui/implot/implot_internal.h
+
 )
 
 #--------------------------------------------------------------------
@@ -151,4 +121,16 @@ add_custom_command(
 TARGET ${PROJECT_NAME}
 POST_BUILD
 COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/LinaEditor/Resources" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Resources/")
+
+# Copy project resources to binary directory
+add_custom_command(
+TARGET ${PROJECT_NAME}
+POST_BUILD
+COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Sandbox/Resources" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/Resources")
+
+# Copy project resources to project solution directory to run within IDE.
+add_custom_command(
+TARGET ${PROJECT_NAME}
+POST_BUILD
+COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Sandbox/Resources" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Resources/")
 

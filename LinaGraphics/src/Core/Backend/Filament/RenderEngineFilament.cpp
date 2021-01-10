@@ -123,7 +123,9 @@ namespace Lina::Graphics
 	
 		// Create the primary camera, game view & scene, & get manager references.
 		m_gameCamera = m_engine->createCamera(utils::EntityManager::get().create());
+		m_uiCamera = m_engine->createCamera(utils::EntityManager::get().create());
 		m_gameView = m_engine->createView();
+		m_uiView = m_engine->createView();
 		m_gameScene = m_engine->createScene();
 		m_transformManager = &m_engine->getTransformManager();
 		m_entityManager = &utils::EntityManager::get();
@@ -133,14 +135,22 @@ namespace Lina::Graphics
 		auto sb = Skybox::Builder().color(math::float4{ 0.0735f, 0.035f, 0.035f, 1.0f }).showSun(true).build(*m_engine);	
 		double aspect = ((double)e.m_appInfo->m_windowProperties.m_width / (double)e.m_appInfo->m_windowProperties.m_height);
 		m_gameScene->setSkybox(sb);
+
 		m_gameCamera->setExposure(16.0f, 1 / 125.0f, 100.0f);
 		m_gameCamera->setExposure(100.0f);
-		m_gameCamera->setProjection(90.0f, aspect, 0.1f, 1000.0f);
+		m_gameCamera->setProjection(90.0f, aspect, 0.1f, 1000.0f);	
 		m_gameCamera->lookAt({ 0, 0, -10 }, { 0, 0, 0 }, { 0, 1, 0 });
 		m_gameView->setViewport({ 0, 0, (uint32_t)e.m_appInfo->m_windowProperties.m_width, (uint32_t)e.m_appInfo->m_windowProperties.m_height });
 		m_gameView->setScene(m_gameScene);
-		m_gameView->setCamera(m_gameCamera); /* When we don't set the camera we run into a segfault. */
+		m_gameView->setCamera(m_gameCamera); 
 		m_gameView->setName("game-view");
+
+
+		m_uiCamera->setExposure(16.0f, 1 / 125.0f, 100.0f);
+		m_uiCamera->setProjection(Camera::Projection::ORTHO, 0.0, (uint32_t)e.m_appInfo->m_windowProperties.m_width, (uint32_t)e.m_appInfo->m_windowProperties.m_height, 0.0, 0.0, 1.0);
+		m_uiView->setCamera(m_uiCamera);
+		m_uiView->setName("ui-view");
+		m_uiView->setViewport({ 0, 0, (uint32_t)e.m_appInfo->m_windowProperties.m_width, (uint32_t)e.m_appInfo->m_windowProperties.m_height });
 
 		m_initialized = true;
 
@@ -215,15 +225,19 @@ namespace Lina::Graphics
 	{
 		PROFILER_FUNC();
 
-		
+		m_eventSys->Trigger<Event::EPreRender>();
 
-		if (m_renderer->beginFrame(m_swapchain)) {
-
-			
+		if (m_renderer->beginFrame(m_swapchain)) 
+		{
 			// for each View
+
 			m_renderer->render(m_gameView);
+			m_renderer->render(m_uiView);
+
 			m_renderer->endFrame();
 		}
+
+		m_eventSys->Trigger<Event::EPostRender>();
 
 	}
 

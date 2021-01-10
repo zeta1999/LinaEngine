@@ -31,28 +31,86 @@ SOFTWARE.
 #include "Core/Log.hpp"
 #include "EventSystem/EventSystem.hpp"
 #include "Core/Environment.hpp"
+#include "Core/InputMappings.hpp"
+#include "Core/WindowBackend.hpp"
+#include "Core/RenderingBackend.hpp"
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_internal.h"
-#include "imgui/imgui_impl_opengl3.h"
+#include "Core/Backend/Filament/imgui/imgui.h"
+#include "Core/Backend/Filament/imgui/imgui_internal.h"
 
-#define IMGUI_IMPL_OPENGL_LOADER_GLAD
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include "IconsFontAwesome5.h"
-#include "IconsForkAwesome.h"
-#include "IconsMaterialDesign.h"
+#include <IconsFontAwesome5.h>
+#include <IconsForkAwesome.h>
+#include <IconsMaterialDesign.h>
+#include <Core/Backend/Filament/filagui/ImGuiHelper.h>
 
 namespace Lina::Editor
 {
+	std::function<void(filament::Engine*, filament::View*)> cb;
+	static bool s = true;
+	void sa(filament::Engine*, filament::View*)
+	{
+		ImGui::Begin("aq");
+		ImGui::Text("helll");
+		ImGui::End();
+		ImGui::ShowDemoWindow(&s);
+	};
+
+	EditorApplication::~EditorApplication()
+	{
+		if (m_guiHelper != nullptr)
+			delete m_guiHelper;
+
+		m_guiHelper = nullptr;
+		g_env.g_eventSystem->Disconnect<Event::ETick>(this);
+	}
+
 	void EditorApplication::Startup()
 	{
 		// Setup Dear ImGui context
-		IMGUI_CHECKVERSION();
+		cb = std::bind(sa, std::placeholders::_1, std::placeholders::_2);
+
+		g_env.g_eventSystem->Connect<Event::ETick, &EditorApplication::Render>(this);
+
+		m_guiHelper = new filagui::ImGuiHelper(g_env.g_render->GetEngine(), g_env.g_render->GetUIView(), "Resources/Editor/Fonts/Mukta-Medium.ttf");
+		m_guiHelper->setDisplaySize(g_env.g_appInfo->m_windowProperties.m_width, g_env.g_appInfo->m_windowProperties.m_height, 1.0f, 1.0f);
+
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.ImeWindowHandle = Lina::g_env.g_render->GetWindow().GetNativeWindow();
+
+		io.KeyMap[ImGuiKey_Tab] = LINA_KEY_TAB;
+		io.KeyMap[ImGuiKey_LeftArrow] = LINA_KEY_LEFT;
+		io.KeyMap[ImGuiKey_RightArrow] = LINA_KEY_RIGHT;
+		io.KeyMap[ImGuiKey_UpArrow] = LINA_KEY_UP;
+		io.KeyMap[ImGuiKey_DownArrow] = LINA_KEY_DOWN;
+		io.KeyMap[ImGuiKey_PageUp] = LINA_KEY_PAGEUP;
+		io.KeyMap[ImGuiKey_PageDown] = LINA_KEY_PAGEDOWN;
+		io.KeyMap[ImGuiKey_Home] = LINA_KEY_HOME;
+		io.KeyMap[ImGuiKey_End] = LINA_KEY_END;
+		io.KeyMap[ImGuiKey_Insert] = LINA_KEY_INSERT;
+		io.KeyMap[ImGuiKey_Delete] = LINA_KEY_DELETE;
+		io.KeyMap[ImGuiKey_Backspace] = LINA_KEY_BACKSPACE;
+		io.KeyMap[ImGuiKey_Space] = LINA_KEY_SPACE;
+		io.KeyMap[ImGuiKey_Enter] = LINA_KEY_RETURN;
+		io.KeyMap[ImGuiKey_Escape] = LINA_KEY_ESCAPE;
+		io.KeyMap[ImGuiKey_A] = LINA_KEY_A;
+		io.KeyMap[ImGuiKey_C] = LINA_KEY_C;
+		io.KeyMap[ImGuiKey_V] = LINA_KEY_V;
+		io.KeyMap[ImGuiKey_X] = LINA_KEY_X;
+		io.KeyMap[ImGuiKey_Y] = LINA_KEY_Y;
+		io.KeyMap[ImGuiKey_Z] = LINA_KEY_Z;
+		io.SetClipboardTextFn = [](void*, const char* text) {
+			g_env.g_render->GetWindow().SetClipboardString(text);
+		};
+		io.GetClipboardTextFn = [](void*) -> const char* {
+			return g_env.g_render->GetWindow().GetClipboardString();
+		};
+
+		io.ClipboardUserData = nullptr;
+
+
+		return;
 		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
 
 		// Add default font.
 		io.Fonts->AddFontFromFileTTF("Resources/Editor/Fonts/Mukta-Medium.ttf", 20.0f, NULL);
@@ -71,7 +129,7 @@ namespace Lina::Editor
 		io.Fonts->AddFontFromFileTTF("Resources/Editor/Fonts/MaterialIcons/MaterialIcons-Regular.ttf", 30.0f, &icons_config, icons_rangesMD);
 
 		// Setup configuration flags.
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		ImGui::StyleColorsDark();
 
 		GLFWwindow* window = static_cast<GLFWwindow*>(Lina::g_env.g_render->GetWindow().GetWindowPointer());
@@ -133,8 +191,8 @@ namespace Lina::Editor
 		colors[ImGuiCol_TabActive] = ImVec4(0.17f, 0.17f, 0.18f, 1.00f);
 		colors[ImGuiCol_TabUnfocused] = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
 		colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.17f, 0.17f, 0.18f, 1.00f);
-		colors[ImGuiCol_DockingPreview] = ImVec4(0.45f, 0.28f, 0.46f, 1.00f);
-		colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+		//colors[ImGuiCol_DockingPreview] = ImVec4(0.45f, 0.28f, 0.46f, 1.00f);
+		//colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
 		colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
 		colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
 		colors[ImGuiCol_PlotHistogram] = ImVec4(0.69f, 0.15f, 0.29f, 1.00f);
@@ -150,15 +208,8 @@ namespace Lina::Editor
 	}
 
 	void EditorApplication::Render()
-	{	
-		//Setup
-	
-		ImGui::NewFrame();
+	{
+		m_guiHelper->render(0.001f, cb);
 
-
-		ImGui::ShowDemoWindow(nullptr);
-
-		// Rendering
-		ImGui::Render();
 	}
 }

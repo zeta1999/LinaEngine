@@ -103,7 +103,7 @@ namespace Lina::Resources
 		void OnPreMainLoop(Event::EPreMainLoop& e);
 		void OnPostMainLoop(Event::EPostMainLoop& e);
 		void OnAppLoad(Event::EAppLoad& e);
-		void FillBundleForEditor(FileUtility::Folder& root, std::unordered_map<std::string, ResourceType>& filledResources, ResourceProgressData* progData);
+		void FillBundleForEditor(FileUtility::Folder& root,ResourceProgressData* progData);
 
 	private:
 

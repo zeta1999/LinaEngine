@@ -38,6 +38,16 @@ namespace Lina::Graphics
 		LINA_ERR("[Window GLFW] -> GLFW Error: {0} Description: {1} ", error, desc);
 	}
 
+	void WindowFilament::SetClipboardString(const char* str)
+	{
+		glfwSetClipboardString(m_glfwWindow, str);
+	}
+
+	const char* WindowFilament::GetClipboardString()
+	{
+		return glfwGetClipboardString(m_glfwWindow);
+	}
+
 	WindowFilament::~WindowFilament()
 	{
 
@@ -80,6 +90,7 @@ namespace Lina::Graphics
 			return false;
 		}
 
+	
 		glfwSetErrorCallback(GLFWErrorCallback);
 	
 		m_eventSys->Trigger<Event::EWindowContextCreated>({ (void*)m_glfwWindow });

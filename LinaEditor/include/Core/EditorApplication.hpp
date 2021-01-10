@@ -41,6 +41,10 @@ Timestamp: 4/14/2019 7:46:20 PM
 
 #include <Core/Application.hpp>
 
+namespace filagui
+{
+	class ImGuiHelper;
+}
 
 namespace Lina::Editor
 {
@@ -50,12 +54,14 @@ namespace Lina::Editor
 	public:
 
 		EditorApplication() { }
-		~EditorApplication() {};
+		~EditorApplication();
 
 		void Startup();
 		void Render();
 
 	private:
+
+		filagui::ImGuiHelper* m_guiHelper;
 
 	};
 }
@@ -66,12 +72,14 @@ int main(int argc, char** argv)
 	Lina::Application app;
 	Lina::ApplicationInfo appInfo;
 	Lina::Editor::EditorApplication editorApp;
-	appInfo.m_windowProperties.m_width = 800;
-	appInfo.m_windowProperties.m_height = 400;
+	appInfo.m_windowProperties.m_width = 1440;
+	appInfo.m_windowProperties.m_height = 900;
 	appInfo.m_windowProperties.m_decorated = false;
 	appInfo.m_appMode = Lina::ApplicationMode::Editor;
 	app.Startup(appInfo);
-	app.Run(appInfo);
+	editorApp.Startup();
+	app.Run();
+
 	return 0;
 }
 

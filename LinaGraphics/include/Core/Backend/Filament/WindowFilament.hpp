@@ -71,6 +71,10 @@ namespace Lina::Graphics
 {
 	class WindowFilament
 	{
+	public:
+
+		void SetClipboardString(const char* str);
+		const char* GetClipboardString();
 
 	private:
 
@@ -85,7 +89,6 @@ namespace Lina::Graphics
 		void Terminate();
 		void OnWindowResize(int w, int h);
 		void SwapBuffers();
-
 		void poll()
 		{
 			glfwPollEvents();

@@ -109,11 +109,10 @@ namespace Lina::Resources
 					m_currentProgressData.m_progressTitle = "Loading resources...";
 					m_currentProgressData.m_state = ResourceProgressState::InProgress;
 					m_currentProgressData.m_currentProgress = 0.0f;
-					std::unordered_map<std::string, ResourceType> filledResources;
 
 					// Start filling preceeded & followed by an event dispatch.
 					m_eventSys->Trigger<Event::EResourceProgressStarted>();
-					FillBundleForEditor(root, filledResources, &m_currentProgressData);
+					FillBundleForEditor(root, &m_currentProgressData);
 
 					// Unload all processed packages since the listeners of resource loaders already uploaded the necessary buffers to cpu.
 					// From the packages to necessary memory blocks.
@@ -245,11 +244,11 @@ namespace Lina::Resources
 		m_activeLevel.RemoveUsedResource(path);
 	}
 
-	void ResourceManager::FillBundleForEditor(FileUtility::Folder& root, std::unordered_map<std::string, ResourceType>& filledResources, ResourceProgressData* progData)
+	void ResourceManager::FillBundleForEditor(FileUtility::Folder& root,ResourceProgressData* progData)
 	{
 		for (auto& folder : root.m_folders)
 		{
-			FillBundleForEditor(folder, filledResources, progData);
+			FillBundleForEditor(folder, progData);
 		}
 
 		// InitializeVulkan each file into memory where they will persist during the editor lifetime.
@@ -257,7 +256,6 @@ namespace Lina::Resources
 		{
 			ResourceType resType = GetResourceType(file.m_extension);
 			m_bundle.FillProcessedPackage(file.m_fullPath, resType, progData, m_eventSys);
-			filledResources[file.m_fullPath] = resType;
 		}
 	}
 

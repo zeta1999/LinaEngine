@@ -47,6 +47,7 @@ namespace Lina
 		g_env.g_physics = &m_physicsEngine;
 		g_env.g_render = &m_renderEngine;
 		g_env.g_resources = &m_resourceManager;
+		g_env.g_appInfo = &m_appInfo;
 
 		Log::s_onLogSink.connect<&Application::OnLog>(this);
 
@@ -66,11 +67,10 @@ namespace Lina
 		m_resourceManager.SetReferences(&m_eventSystem, &m_ecs);
 
 		m_eventSystem.Trigger<Event::EAppLoad>({&m_appInfo});
-
-	
+		
 	}
 
-	void Application::Run(ApplicationInfo appInfo)
+	void Application::Run()
 	{	
 		// Wait for resource manager before running the main loop.
 		Resources::ResourceProgressData& progData = m_resourceManager.GetCurrentProgressData();
@@ -87,7 +87,7 @@ namespace Lina
 		}
 
 		// Run
-		m_engine.Run(appInfo.m_appMode);
+		m_engine.Run(m_appInfo.m_appMode);
 
 		// Cleanup
 		PROFILER_DUMP("profile.prof");

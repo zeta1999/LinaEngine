@@ -40,6 +40,7 @@ Timestamp: 1/10/2021 2:49:34 PM
 #define Environment_HPP
 
 // Headers here.
+#include "Application.hpp"
 #include "EventSystem/Events.hpp"
 #include "EventSystem/EventSystem.hpp"
 #include "Core/InputBackend.hpp"
@@ -55,6 +56,7 @@ namespace Lina
 {
 	struct AppEnvironment
 	{
+		ApplicationInfo* g_appInfo = nullptr;
 		Engine* g_engine = nullptr;
 		Event::EventSystem* g_eventSystem = nullptr;
 		ECS::Registry* g_ecs = nullptr;
