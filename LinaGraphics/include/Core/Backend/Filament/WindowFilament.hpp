@@ -89,10 +89,7 @@ namespace Lina::Graphics
 		void Terminate();
 		void OnWindowResize(int w, int h);
 		void SwapBuffers();
-		void poll()
-		{
-			glfwPollEvents();
-		}
+		void Poll();
 
 	public:
 

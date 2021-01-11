@@ -82,12 +82,6 @@ namespace Lina::Resources
 		// Queries current progress data, useful for showing progress information.
 		ResourceProgressData& GetCurrentProgressData() { return m_currentProgressData; }
 
-		// Returns nullptr if not found.
-		MaterialResource* GetMaterialResource(StringIDType sid);
-
-		// Returns nullptr if not found.
-		ShaderResource* GetShaderResource(StringIDType sid);
-
 		// Adds a resource reference to current active level.
 		void AddResourceReference(const std::string& path, ResourceType type);
 

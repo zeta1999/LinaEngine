@@ -49,10 +49,8 @@ namespace Lina::Editor
 	static bool s = true;
 	void sa(filament::Engine*, filament::View*)
 	{
-		ImGui::Begin("aq");
-		ImGui::Text("helll");
-		ImGui::End();
-		ImGui::ShowDemoWindow(&s);
+		//ImGui::ShowDemoWindow(&s);
+
 	};
 
 	EditorApplication::~EditorApplication()

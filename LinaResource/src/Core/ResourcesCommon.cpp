@@ -55,6 +55,9 @@ namespace Lina::Resources
 		{ StringID("geo"), ResourceType::GLSLGeo },
 		{ StringID("frag"), ResourceType::GLSLFrag },
 		{ StringID("spv"), ResourceType::SPIRV },
+		{ StringID("linamat"), ResourceType::MaterialMeta },
+		{ StringID("linaimage"), ResourceType::ImageMeta },
+		{ StringID("linamesh"), ResourceType::MeshMeta },
 	};
 
 	ResourceType GetResourceType(const std::string& extension)

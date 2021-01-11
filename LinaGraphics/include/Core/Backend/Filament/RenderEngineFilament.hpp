@@ -112,6 +112,7 @@ namespace Lina::Graphics
 		void OnWindowResize(Event::EWindowResized& e);
 		void OnMeshResourceLoaded(Event::EMeshResourceLoaded& e);
 		void OnMaterialResourceLoaded(Event::EMaterialResourceLoaded& e);
+		void OnImageResourceLoaded(Event::EImageResourceLoaded& e);
 		void Tick();
 		void Render();
 		void DisconnectEvents();

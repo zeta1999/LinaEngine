@@ -27,36 +27,40 @@ SOFTWARE.
 */
 
 /*
-Class: ResourcePackages
+Class: FilaImage
 
+Serializable image wrapper for filament textures.
 
-
-Timestamp: 12/28/2020 9:53:53 PM
+Timestamp: 1/11/2021 7:44:52 PM
 */
 
 #pragma once
 
-#ifndef ResourcePackages_HPP
-#define ResourcePackages_HPP
+#ifndef FilaImage_HPP
+#define FilaImage_HPP
 
 // Headers here.
-#include "Utility/StringId.hpp"
-#include "Resources/ImageResource.hpp"
-#include "Resources/MeshResource.hpp"
-#include "Resources/AudioResource.hpp"
-#include "Resources/MaterialResource.hpp"
-#include "Resources/ShaderResource.hpp"
-#include "Resources/MetadataResource.hpp"
+#include "EventSystem/Events.hpp"
 
-namespace Lina::Resources
+
+namespace Lina::Graphics
 {
-	typedef std::unordered_map<StringIDType, ImageResource*> ImagePackage;
-	typedef std::unordered_map<StringIDType, MeshResource*> MeshPackage;
-	typedef std::unordered_map<StringIDType, AudioResource*> AudioPackage;
-	typedef std::unordered_map<StringIDType, MaterialResource*> MaterialPackage;
-	typedef std::unordered_map<StringIDType, ShaderResource*> ShaderPackage;
-	typedef std::unordered_map<StringIDType, MetadataResource*> MetaPackage;
-	typedef std::unordered_map<StringIDType, std::vector<unsigned char>> RawPackage;
+	class FilaImage
+	{
+		
+	public:
+		
+	private:
+
+		friend class RenderEngineFilament;
+
+		FilaImage(Event::EImageResourceLoaded& e);
+		~FilaImage() {};
+	
+		void LoadFromFile(std::string& path);
+	private:
+	
+	};
 }
 
 #endif

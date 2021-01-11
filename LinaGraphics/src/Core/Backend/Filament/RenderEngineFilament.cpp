@@ -31,7 +31,7 @@ SOFTWARE.
 #include "Core/Log.hpp"
 #include "EventSystem/EventSystem.hpp"
 #include "Core/ResourceManager.hpp"
-
+#include "Core/Backend/Filament/FilaImage.hpp"
 #include <filament/FilamentAPI.h>
 #include <filament/Engine.h>
 #include <utils/EntityManager.h>
@@ -83,9 +83,7 @@ namespace Lina::Graphics
 {
 	
 	TransformManager::Instance ti2;
-	Entity renderable;
-	filamesh::MeshReader::Mesh* mesh;
-	filamesh::MeshReader::Mesh* mesh2;
+
 
 	RenderEngineFilament::~RenderEngineFilament()
 	{
@@ -93,6 +91,21 @@ namespace Lina::Graphics
 			DisconnectEvents();
 
 	}
+
+	void RenderEngineFilament::DisconnectEvents()
+	{
+		m_eventSys->Disconnect<Event::EPreMainLoop>(this);
+		m_eventSys->Disconnect<Event::EPostMainLoop>(this);
+		m_eventSys->Disconnect<Event::ERender>(this);
+		m_eventSys->Disconnect<Event::EAppLoad>(this);
+		m_eventSys->Disconnect<Event::ETick>(this);
+		m_eventSys->Disconnect<Event::EWindowResized>(this);
+		m_eventSys->Disconnect<Event::EMeshResourceLoaded>(this);
+		m_eventSys->Disconnect<Event::EMaterialResourceLoaded>(this);
+		m_eventSys->Disconnect<Event::EImageResourceLoaded>(this);
+	}
+
+
 	void RenderEngineFilament::SetReferences(Event::EventSystem* eventSys, ECS::Registry* ecs, Resources::ResourceManager* resources)
 	{
 		m_eventSys = eventSys;
@@ -106,6 +119,7 @@ namespace Lina::Graphics
 		m_eventSys->Connect<Event::EWindowResized, &RenderEngineFilament::OnWindowResize>(this);
 		m_eventSys->Connect<Event::EMeshResourceLoaded, &RenderEngineFilament::OnMeshResourceLoaded>(this);
 		m_eventSys->Connect<Event::EMaterialResourceLoaded, &RenderEngineFilament::OnMaterialResourceLoaded>(this);
+		m_eventSys->Connect<Event::EImageResourceLoaded, &RenderEngineFilament::OnImageResourceLoaded>(this);
 	}
 
 	void RenderEngineFilament::OnAppLoad(Event::EAppLoad& e)
@@ -133,6 +147,8 @@ namespace Lina::Graphics
 
 		// Configure game scene, camera & view.
 		auto sb = Skybox::Builder().color(math::float4{ 0.0735f, 0.035f, 0.035f, 1.0f }).showSun(true).build(*m_engine);	
+		e.m_appInfo->m_windowProperties.m_width = 360;
+		e.m_appInfo->m_windowProperties.m_height = 450;
 		double aspect = ((double)e.m_appInfo->m_windowProperties.m_width / (double)e.m_appInfo->m_windowProperties.m_height);
 		m_gameScene->setSkybox(sb);
 
@@ -140,7 +156,7 @@ namespace Lina::Graphics
 		m_gameCamera->setExposure(100.0f);
 		m_gameCamera->setProjection(90.0f, aspect, 0.1f, 1000.0f);	
 		m_gameCamera->lookAt({ 0, 0, -10 }, { 0, 0, 0 }, { 0, 1, 0 });
-		m_gameView->setViewport({ 0, 0, (uint32_t)e.m_appInfo->m_windowProperties.m_width, (uint32_t)e.m_appInfo->m_windowProperties.m_height });
+		m_gameView->setViewport({ 360, 0, (uint32_t)e.m_appInfo->m_windowProperties.m_width, (uint32_t)e.m_appInfo->m_windowProperties.m_height });
 		m_gameView->setScene(m_gameScene);
 		m_gameView->setCamera(m_gameCamera); 
 		m_gameView->setName("game-view");
@@ -160,7 +176,7 @@ namespace Lina::Graphics
 		m_defaultMaterialInstance->setParameter("metallic", 1.0f);
 		m_defaultMaterialInstance->setParameter("roughness", 1.0f);
 		m_defaultMaterialInstance->setParameter("reflectance", 1.0f);
-	
+
 		utils::Entity light;
 
 		light = m_entityManager->create();
@@ -205,6 +221,14 @@ namespace Lina::Graphics
 		m_materialBuffer[e.m_sid] = e.m_data;
 	}
 
+	void RenderEngineFilament::OnImageResourceLoaded(Event::EImageResourceLoaded& e)
+	{
+		FilaImage* image = new FilaImage(e);
+		Texture::PixelBufferDescriptor buffer(e.m_data, size_t(e.m_width * e.m_height * 4), Texture::Format::RGBA, Texture::Type::UBYTE, (Texture::PixelBufferDescriptor::Callback)&stbi_image_free);
+		Texture* tex = Texture::Builder().width(uint32_t(e.m_width)).height(uint32_t(e.m_height)).levels(1).sampler(Texture::Sampler::SAMPLER_2D).format(Texture::InternalFormat::RGBA8).build(*m_engine);
+		
+	}
+
 	static float t = 0.0f;
 	static bool once = false;
 	void RenderEngineFilament::Tick()
@@ -225,6 +249,7 @@ namespace Lina::Graphics
 	{
 		PROFILER_FUNC();
 
+
 		m_eventSys->Trigger<Event::EPreRender>();
 
 		if (m_renderer->beginFrame(m_swapchain)) 
@@ -239,18 +264,6 @@ namespace Lina::Graphics
 
 		m_eventSys->Trigger<Event::EPostRender>();
 
-	}
-
-	void RenderEngineFilament::DisconnectEvents()
-	{
-		m_eventSys->Disconnect<Event::EPreMainLoop>(this);
-		m_eventSys->Disconnect<Event::EPostMainLoop>(this);
-		m_eventSys->Disconnect<Event::ERender>(this);
-		m_eventSys->Disconnect<Event::EAppLoad>(this);
-		m_eventSys->Disconnect<Event::ETick>(this);
-		m_eventSys->Disconnect<Event::EWindowResized>(this);
-		m_eventSys->Disconnect<Event::EMeshResourceLoaded>(this);
-		m_eventSys->Disconnect<Event::EMaterialResourceLoaded>(this);
 	}
 
 	void RenderEngineFilament::AddMeshData()

@@ -27,36 +27,38 @@ SOFTWARE.
 */
 
 /*
-Class: ResourcePackages
+Class: FilaMaterial
 
+Serializable material wrapper for filament materials.
 
-
-Timestamp: 12/28/2020 9:53:53 PM
+Timestamp: 1/11/2021 7:45:51 PM
 */
 
 #pragma once
 
-#ifndef ResourcePackages_HPP
-#define ResourcePackages_HPP
+#ifndef FilaMaterial_HPP
+#define FilaMaterial_HPP
 
 // Headers here.
-#include "Utility/StringId.hpp"
-#include "Resources/ImageResource.hpp"
-#include "Resources/MeshResource.hpp"
-#include "Resources/AudioResource.hpp"
-#include "Resources/MaterialResource.hpp"
-#include "Resources/ShaderResource.hpp"
-#include "Resources/MetadataResource.hpp"
 
-namespace Lina::Resources
+
+namespace Lina::Graphics
 {
-	typedef std::unordered_map<StringIDType, ImageResource*> ImagePackage;
-	typedef std::unordered_map<StringIDType, MeshResource*> MeshPackage;
-	typedef std::unordered_map<StringIDType, AudioResource*> AudioPackage;
-	typedef std::unordered_map<StringIDType, MaterialResource*> MaterialPackage;
-	typedef std::unordered_map<StringIDType, ShaderResource*> ShaderPackage;
-	typedef std::unordered_map<StringIDType, MetadataResource*> MetaPackage;
-	typedef std::unordered_map<StringIDType, std::vector<unsigned char>> RawPackage;
+	class FilaMaterial
+	{
+		
+	public:
+		
+	private:
+
+		friend class RenderEngineFilament;
+
+		FilaMaterial() {};
+		~FilaMaterial() {};
+	
+	private:
+	
+	};
 }
 
 #endif

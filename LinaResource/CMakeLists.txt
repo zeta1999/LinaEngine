@@ -30,6 +30,7 @@ set (LINARESOURCE_SOURCES
 	src/Utility/Packager.cpp
 	
 	src/Resources/ImageResource.cpp
+	src/Resources/MetadataResource.cpp
 	src/Resources/MeshResource.cpp
 	src/Resources/ShaderResource.cpp
 	src/Resources/AudioResource.cpp
@@ -55,6 +56,7 @@ set(LINARESOURCE_HEADERS
 	
 	
 	include/Resources/ImageResource.hpp
+	include/Resources/MetadataResource.hpp
 	include/Resources/MeshResource.hpp
 	include/Resources/ShaderResource.hpp
 	include/Resources/AudioResource.hpp

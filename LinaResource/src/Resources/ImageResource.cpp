@@ -49,8 +49,11 @@ namespace Lina::Resources
 
 		// Trigger event & free data.
 		eventSys->Trigger<Event::EImageResourceLoaded>(Event::EImageResourceLoaded{ m_sid, data, w, h });
-		free(data);
 
+// Filament callback is responsible for freeing the data.
+#ifndef LINA_GRAPHICS_FILAMENT
+		free(data);
+#endif
 		LINA_TRACE("[Image Loader] -> Image loaded from memory.");
 		return true;
 	}
@@ -68,7 +71,11 @@ namespace Lina::Resources
 		
 		// Trigger event & free data.
 		eventSys->Trigger<Event::EImageResourceLoaded>(Event::EImageResourceLoaded{ StringID(path.c_str()).value(), data, w, h });
+
+// Filament callback is responsible for freeing the data.
+#ifndef LINA_GRAPHICS_FILAMENT
 		free(data);
+#endif
 
 		LINA_TRACE("[Image Loader] -> Image loaded from file: {0}", path);
 		return true;

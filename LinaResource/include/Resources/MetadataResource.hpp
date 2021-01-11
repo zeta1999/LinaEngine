@@ -27,36 +27,48 @@ SOFTWARE.
 */
 
 /*
-Class: ResourcePackages
+Class: MetadataResource
 
 
 
-Timestamp: 12/28/2020 9:53:53 PM
+Timestamp: 1/11/2021 7:59:29 PM
 */
 
 #pragma once
 
-#ifndef ResourcePackages_HPP
-#define ResourcePackages_HPP
+#ifndef MetadataResource_HPP
+#define MetadataResource_HPP
 
 // Headers here.
 #include "Utility/StringId.hpp"
-#include "Resources/ImageResource.hpp"
-#include "Resources/MeshResource.hpp"
-#include "Resources/AudioResource.hpp"
-#include "Resources/MaterialResource.hpp"
-#include "Resources/ShaderResource.hpp"
-#include "Resources/MetadataResource.hpp"
+
+namespace Lina
+{
+	namespace Event
+	{
+		class EventSystem;
+	}
+}
 
 namespace Lina::Resources
 {
-	typedef std::unordered_map<StringIDType, ImageResource*> ImagePackage;
-	typedef std::unordered_map<StringIDType, MeshResource*> MeshPackage;
-	typedef std::unordered_map<StringIDType, AudioResource*> AudioPackage;
-	typedef std::unordered_map<StringIDType, MaterialResource*> MaterialPackage;
-	typedef std::unordered_map<StringIDType, ShaderResource*> ShaderPackage;
-	typedef std::unordered_map<StringIDType, MetadataResource*> MetaPackage;
-	typedef std::unordered_map<StringIDType, std::vector<unsigned char>> RawPackage;
-}
 
+	class MetadataResource
+	{
+
+	public:
+
+	private:
+
+		friend class ResourceBundle;
+		friend class ResourceManager;
+
+		MetadataResource() {};
+		~MetadataResource() {};
+
+		bool LoadFromFile(ResourceType type, const std::string& path, Event::EventSystem* eventSys);
+		bool LoadFromMemory(ResourceType type, StringIDType m_sid, unsigned char* buffer, size_t bufferSize, Event::EventSystem* eventSys);
+
+	};
+}
 #endif

@@ -62,8 +62,8 @@ namespace Lina::Resources
         e.m_data.insert(e.m_data.begin(),
             std::istream_iterator<unsigned char>(file),
             std::istream_iterator<unsigned char>());
-        // Trigger event w/ data
-  
+
+        // Trigger event w/ data 
         eventSys->Trigger<Event::EMaterialResourceLoaded>(e);
         LINA_TRACE("[Material Loader] -> Material loaded from file: {0}", path);
 
@@ -96,6 +96,11 @@ namespace Lina::Resources
     {
 #ifdef LINA_GRAPHICS_FILAMENT
 
+        Event::EMaterialResourceLoaded e = Event::EMaterialResourceLoaded();
+        e.m_sid = StringID(path.c_str()).value();
+        e.m_data = std::vector(buffer, buffer + bufferSize);
+        eventSys->Trigger<Event::EMaterialResourceLoaded>(e);
+        LINA_TRACE("[Material Loader] -> Material loaded from file: {0}", path);
         return true;
 #else
         {

@@ -186,7 +186,12 @@ namespace Lina::Graphics
 
 	void WindowFilament::SwapBuffers()
 	{
-		
+		glfwSwapBuffers(m_glfwWindow);
+	}
+
+	void WindowFilament::Poll()
+	{
+		glfwPollEvents();
 	}
 
 #ifdef LINA_WINDOWS

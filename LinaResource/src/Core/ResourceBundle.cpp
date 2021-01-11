@@ -32,6 +32,7 @@ SOFTWARE.
 #include "Resources/AudioResource.hpp"
 #include "Resources/MaterialResource.hpp"
 #include "Resources/ShaderResource.hpp"
+#include "Resources/MetadataResource.hpp"
 #include "Core/Log.hpp"
 #include "EventSystem/EventSystem.hpp"
 
@@ -59,13 +60,25 @@ namespace Lina::Resources
 		for (auto& r : m_meshPackage)
 			delete r.second;
 
+		for (auto& r : m_materialPackage)
+			delete r.second;
+
+		for (auto& r : m_shaderPackage)
+			delete r.second;
+
+		for (auto& r : m_metaPackage)
+			delete r.second;
+
 		m_imagePackage.clear();
 		m_audioPackage.clear();
 		m_meshPackage.clear();
-
+		m_materialPackage.clear();
+		m_shaderPackage.clear();
+		m_metaPackage.clear();
 		/* DO NOT delete material & shader resources, as they are considered active resources and need to stay in-memory.*/
 	}
 
+	// Packages that are loaded in runtime.
 	void ResourceBundle::ProcessRawPackages(Event::EventSystem* eventSys)
 	{
 		for (auto& package : m_rawPackages)
@@ -108,14 +121,15 @@ namespace Lina::Resources
 					else
 						delete mat;
 				}
-				else if (package.first == ResourceType::SPIRV)
+				else if (package.first == ResourceType::ImageMeta || package.first == ResourceType::MeshMeta || package.first == ResourceType::MaterialMeta)
 				{
-					ShaderResource* shader = new ShaderResource();
-					if (shader->LoadFromMemory(resource.first, &resource.second[0], resource.second.size(), eventSys))
-						m_shaderPackage[resource.first] = shader;
+					MetadataResource* meta = new MetadataResource();
+					if (meta->LoadFromMemory(package.first, resource.first, &resource.second[0], resource.second.size(), eventSys))
+						m_metaPackage[resource.first] = meta;
 					else
-						delete shader;
+						delete meta;
 				}
+			
 			}
 		}
 
@@ -123,10 +137,11 @@ namespace Lina::Resources
 		UnloadRawPackages();
 	}
 
+	// Packages that are loaded in editor.
 	void ResourceBundle::FillProcessedPackage(const std::string& path, ResourceType type, ResourceProgressData* progData, Event::EventSystem* eventSys)
 	{
 		progData->m_currentResourceName = path;
-		// InitializeVulkan the corresponding package class from memory.
+		// Initialize the corresponding package class from memory.
 		if (type == ResourceType::Image)
 		{
 			ImageResource* img = new ImageResource();
@@ -159,13 +174,13 @@ namespace Lina::Resources
 			else
 				delete mat;
 		}
-		else if (type == ResourceType::GLSLFrag || type == ResourceType::GLSLGeo || type == ResourceType::GLSLVertex)
+		else if (type == ResourceType::ImageMeta || type == ResourceType::MeshMeta || type == ResourceType::MaterialMeta)
 		{
-			ShaderResource* shader = new ShaderResource();
-			if (shader->LoadFromFile(path, type, eventSys))
-				m_shaderPackage[StringID(path.c_str()).value()] = shader;
+			MetadataResource* meta = new MetadataResource();
+			if (meta->LoadFromFile(type, path, eventSys))
+				m_metaPackage[StringID(path.c_str()).value()] = meta;
 			else
-				delete shader;
+				delete meta;
 		}
 	}
 }

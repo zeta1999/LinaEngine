@@ -220,20 +220,6 @@ namespace Lina::Resources
 
 	}
 
-	MaterialResource* ResourceManager::GetMaterialResource(StringIDType sid)
-	{
-		if (m_bundle.m_materialPackage.find(sid) != m_bundle.m_materialPackage.end())
-			return m_bundle.m_materialPackage[sid];
-		else return nullptr;
-	}
-
-	ShaderResource* ResourceManager::GetShaderResource(StringIDType sid)
-	{
-		if (m_bundle.m_shaderPackage.find(sid) != m_bundle.m_shaderPackage.end())
-			return m_bundle.m_shaderPackage[sid];
-		else return nullptr;
-	}
-
 	void ResourceManager::AddResourceReference(const std::string& path, ResourceType type)
 	{
 		m_activeLevel.AddUsedResource(path);

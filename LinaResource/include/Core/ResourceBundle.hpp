@@ -79,7 +79,9 @@ namespace Lina::Resources
 			{ResourceType::Material, RawPackage()},
 			{ResourceType::Mesh, RawPackage()},
 			{ResourceType::Audio, RawPackage()},
-			{ResourceType::SPIRV, RawPackage()}
+			{ResourceType::MeshMeta, RawPackage()}
+			{ResourceType::MaterialMeta, RawPackage()}
+			{ResourceType::ImageMeta, RawPackage()}
 		};
 
 		ImagePackage m_imagePackage;
@@ -87,6 +89,7 @@ namespace Lina::Resources
 		AudioPackage m_audioPackage;
 		MaterialPackage m_materialPackage;		
 		ShaderPackage m_shaderPackage;		
+		MetaPackage m_metaPackage;		
 	};
 }
 

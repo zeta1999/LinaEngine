@@ -49,6 +49,9 @@ set (LINAGRAPHICS_SOURCES
 
 	src/Core/Backend/Filament/WindowFilament.cpp
 	src/Core/Backend/Filament/RenderEngineFilament.cpp
+	src/Core/Backend/Filament/FilaMesh.cpp
+	src/Core/Backend/Filament/FilaMaterial.cpp
+	src/Core/Backend/Filament/FilaImage.cpp
 
 	include/Core/Backend/Filament/MaterialResources/materialresources.c
 	
@@ -86,6 +89,9 @@ set(LINAGRAPHICS_HEADERS
 	
 	include/Core/Backend/Filament/WindowFilament.hpp
 	include/Core/Backend/Filament/RenderEngineFilament.hpp
+	include/Core/Backend/Filament/FilaMesh.hpp
+	include/Core/Backend/Filament/FilaMaterial.hpp
+	include/Core/Backend/Filament/FilaImage.hpp
 	include/Core/Backend/Filament/MaterialResources/materialresources.h
 
 	include/Core/Backend/Filament/filagui/ImGuiExtensions.h
@@ -122,6 +128,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/vendor/glfw/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/vendor/vulkan/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/vendor/glad/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/LinaCommon/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/LinaResource/include)
@@ -145,6 +152,7 @@ target_link_libraries(${PROJECT_NAME}
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/meshoptimizer.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/smol-v.lib
 	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/filament/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/ibl.lib
+	PUBLIC ${CMAKE_SOURCE_DIR}/vendor/glad/lib/${TARGET_ARCHITECTURE}/$<CONFIGURATION>/glad.lib
 	PUBLIC gdi32.lib
 	PUBLIC shlwapi.lib
 	PUBLIC user32.lib

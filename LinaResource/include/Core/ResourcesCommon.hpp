@@ -68,7 +68,10 @@ namespace Lina::Resources
 		GLSLVertex,
 		GLSLFrag,
 		GLSLGeo,
-		SPIRV
+		SPIRV,
+		MaterialMeta,
+		ImageMeta,
+		MeshMeta
 	};
 
 	extern std::unordered_map<StringIDType, ResourceType> m_resourceTypeTable;
