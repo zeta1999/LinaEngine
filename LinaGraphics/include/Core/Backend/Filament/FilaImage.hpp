@@ -41,7 +41,14 @@ Timestamp: 1/11/2021 7:44:52 PM
 
 // Headers here.
 #include "EventSystem/Events.hpp"
+#include <cereal/cereal.hpp>
+#include "filament/Texture.h"
+#include "filament/TextureSampler.h"
 
+namespace filament
+{
+	class Engine;
+}
 
 namespace Lina::Graphics
 {
@@ -54,12 +61,34 @@ namespace Lina::Graphics
 
 		friend class RenderEngineFilament;
 
-		FilaImage(Event::EImageResourceLoaded& e);
+		FilaImage(filament::Engine* engine, Event::EImageResourceLoaded& e);
 		~FilaImage() {};
-	
-		void LoadFromFile(std::string& path);
+
+		void Construct();
+		void LoadMetadata(const std::string& path);
+		void LoadMetadata(unsigned char* buffer, size_t bufferSize);
+		void ExportMetadata(const std::string& path);
+
 	private:
-	
+
+		Event::EImageResourceLoaded m_resEvent;
+		filament::Engine* m_engine = nullptr;
+		filament::Texture* m_tex = nullptr;
+		filament::TextureSampler* m_sampler = nullptr;
+		filament::TextureSampler::MinFilter m_minFilter = filament::TextureSampler::MinFilter::NEAREST;
+		filament::TextureSampler::MagFilter m_magFilter = filament::TextureSampler::MagFilter::NEAREST;
+		filament::TextureSampler::WrapMode m_wrapS = filament::TextureSampler::WrapMode::CLAMP_TO_EDGE;
+		filament::TextureSampler::WrapMode m_wrapT = filament::TextureSampler::WrapMode::CLAMP_TO_EDGE;
+		filament::TextureSampler::WrapMode m_wrapR = filament::TextureSampler::WrapMode::CLAMP_TO_EDGE;
+		filament::Texture::InternalFormat m_internalFormat = filament::Texture::InternalFormat::RGBA8;
+
+		friend class cereal::access;
+
+		template<typename Archive>
+		void serialize(Archive& archive)
+		{
+			archive(m_minFilter, m_magFilter, m_wrapS, m_wrapT, m_wrapR);
+		}
 	};
 }
 

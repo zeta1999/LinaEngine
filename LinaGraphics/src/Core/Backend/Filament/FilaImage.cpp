@@ -27,11 +27,56 @@ SOFTWARE.
 */
 
 #include "Core/Backend/Filament/FilaImage.hpp"
+#include <stb/stb_image.h>
+#include <fstream>
+#include <cereal/archives/portable_binary.hpp>
 
+using namespace filament;
 namespace Lina::Graphics
 {
-	FilaImage::FilaImage(Event::EImageResourceLoaded& e)
+	FilaImage::FilaImage(filament::Engine* engine, Event::EImageResourceLoaded& e)
 	{
-		
+		m_engine = engine;
+		m_resEvent = e;
+
 	}
+	void FilaImage::Construct()
+	{
+		Texture::PixelBufferDescriptor buffer(m_resEvent.m_data, size_t((size_t)m_resEvent.m_width * (size_t)m_resEvent.m_height * (size_t)4), Texture::Format::RGBA, Texture::Type::UBYTE, (Texture::PixelBufferDescriptor::Callback)&stbi_image_free);
+		m_tex = Texture::Builder().width(uint32_t(m_resEvent.m_width)).height(uint32_t(m_resEvent.m_height)).levels(1).sampler(Texture::Sampler::SAMPLER_2D).format(m_internalFormat).build(*m_engine);
+		m_sampler = new TextureSampler(m_minFilter, m_magFilter, m_wrapS, m_wrapT, m_wrapR);
+	}
+
+	void FilaImage::LoadMetadata(const std::string& path)
+	{
+		{
+			std::ifstream stream(path, std::ios::binary);
+			{
+				cereal::PortableBinaryInputArchive iarchive(stream);
+				iarchive(*this);
+			}
+		}
+	}
+
+	void FilaImage::LoadMetadata(unsigned char* buffer, size_t bufferSize)
+	{
+		std::string data((char*)buffer, bufferSize);
+		std::istringstream stream(data);
+		{
+			cereal::PortableBinaryInputArchive iarchive(stream);
+			iarchive(*this);
+		}
+	}
+
+	void FilaImage::ExportMetadata(const std::string& path)
+	{
+		{
+			std::ofstream stream(path, std::ios::binary);
+			{
+				cereal::PortableBinaryOutputArchive oarchive(stream);
+				oarchive(*this);
+			}
+		}
+	}
+
 }
