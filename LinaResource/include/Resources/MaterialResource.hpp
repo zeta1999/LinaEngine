@@ -41,7 +41,6 @@ Timestamp: 12/22/2020 2:03:09 PM
 
 // Headers here.
 #include "Utility/StringId.hpp"
-#include <cereal/cereal.hpp>
 
 namespace Lina
 {
@@ -60,23 +59,12 @@ namespace Lina::Resources
 
 		friend class ResourceBundle;
 		friend class ResourceManager;
-		friend class cereal::access;
 
 		MaterialResource() {};
 		virtual ~MaterialResource() {};
 
-
 		virtual bool LoadFromFile(const std::string& path, Event::EventSystem* eventSys);
 		virtual bool LoadFromMemory(StringIDType m_sid, unsigned char* buffer, size_t bufferSize, Event::EventSystem* eventSys) ;
-		bool Export(const std::string& path);
-		
-		int m_dummy = 0;
-
-		template<typename Archive>
-		void serialize(Archive& archive)
-		{
-			archive(m_dummy);
-		}
 
 	};
 }

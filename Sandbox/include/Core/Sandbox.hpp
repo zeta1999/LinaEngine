@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 	appInfo.m_windowProperties.m_decorated = false;
 	appInfo.m_appMode = Lina::ApplicationMode::Editor;
 	app.Startup(appInfo);
-	app.Run(appInfo);
+	app.Run();
 	return 0;
 }
 

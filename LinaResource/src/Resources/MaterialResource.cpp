@@ -32,7 +32,6 @@ SOFTWARE.
 #include "EventSystem/EventSystem.hpp"
 #include "EventSystem/Events.hpp"
 #include <fstream>
-#include <cereal/archives/portable_binary.hpp>
 
 namespace Lina::Resources
 {
@@ -95,12 +94,11 @@ namespace Lina::Resources
     bool MaterialResource::LoadFromMemory(StringIDType m_sid, unsigned char* buffer, size_t bufferSize, Event::EventSystem* eventSys)
     {
 #ifdef LINA_GRAPHICS_FILAMENT
-
         Event::EMaterialResourceLoaded e = Event::EMaterialResourceLoaded();
-        e.m_sid = StringID(path.c_str()).value();
+        e.m_sid = m_sid;
         e.m_data = std::vector(buffer, buffer + bufferSize);
         eventSys->Trigger<Event::EMaterialResourceLoaded>(e);
-        LINA_TRACE("[Material Loader] -> Material loaded from file: {0}", path);
+        LINA_TRACE("[Material Loader] -> Material loaded from memory");
         return true;
 #else
         {
@@ -115,26 +113,6 @@ namespace Lina::Resources
         LINA_TRACE("[Material Loader] -> Material loaded from memory.");
         return true;
 #endif
-    }
-
-
-    bool MaterialResource::Export(const std::string& path)
-    {
-        if (FileUtility::FileExists(path))
-            FileUtility::DeleteFileInPath(path);
-
-        bool saved = false;
-        {
-            std::ofstream stream(path, std::ios::binary);
-            {
-                cereal::PortableBinaryOutputArchive oarchive(stream); // Create an output archive		
-                oarchive(*this);
-                saved = true;
-            }
-        }
-
-        LINA_TRACE("[Material Exporter] ->  exported: {0}", path);
-        return saved;
     }
 
 }

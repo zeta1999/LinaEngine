@@ -79,8 +79,8 @@ namespace Lina::Resources
 			{ResourceType::Material, RawPackage()},
 			{ResourceType::Mesh, RawPackage()},
 			{ResourceType::Audio, RawPackage()},
-			{ResourceType::MeshMeta, RawPackage()}
-			{ResourceType::MaterialMeta, RawPackage()}
+			{ResourceType::MeshMeta, RawPackage()},
+			{ResourceType::MaterialMeta, RawPackage()},
 			{ResourceType::ImageMeta, RawPackage()}
 		};
 

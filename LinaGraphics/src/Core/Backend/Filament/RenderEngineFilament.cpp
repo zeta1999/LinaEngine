@@ -224,8 +224,8 @@ namespace Lina::Graphics
 	void RenderEngineFilament::OnImageResourceLoaded(Event::EImageResourceLoaded& e)
 	{
 		FilaImage* image = new FilaImage(e);
-		Texture::PixelBufferDescriptor buffer(e.m_data, size_t(e.m_width * e.m_height * 4), Texture::Format::RGBA, Texture::Type::UBYTE, (Texture::PixelBufferDescriptor::Callback)&stbi_image_free);
-		Texture* tex = Texture::Builder().width(uint32_t(e.m_width)).height(uint32_t(e.m_height)).levels(1).sampler(Texture::Sampler::SAMPLER_2D).format(Texture::InternalFormat::RGBA8).build(*m_engine);
+		//Texture::PixelBufferDescriptor buffer(e.m_data, size_t(e.m_width * e.m_height * 4), Texture::Format::RGBA, Texture::Type::UBYTE, (Texture::PixelBufferDescriptor::Callback)&stbi_image_free);
+		//Texture* tex = Texture::Builder().width(uint32_t(e.m_width)).height(uint32_t(e.m_height)).levels(1).sampler(Texture::Sampler::SAMPLER_2D).format(Texture::InternalFormat::RGBA8).build(*m_engine);
 		
 	}
 

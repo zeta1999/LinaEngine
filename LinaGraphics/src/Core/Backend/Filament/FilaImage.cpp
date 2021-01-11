@@ -32,10 +32,6 @@ namespace Lina::Graphics
 {
 	FilaImage::FilaImage(Event::EImageResourceLoaded& e)
 	{
-		// Load the metadata from the file.
-		if (e.m_metaPath.compare("") != 0)
-		{
-
-		}
+		
 	}
 }

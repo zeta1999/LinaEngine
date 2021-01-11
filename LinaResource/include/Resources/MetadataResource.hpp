@@ -41,6 +41,7 @@ Timestamp: 1/11/2021 7:59:29 PM
 
 // Headers here.
 #include "Utility/StringId.hpp"
+#include "Core/ResourcesCommon.hpp"
 
 namespace Lina
 {
