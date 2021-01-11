@@ -67,7 +67,7 @@ namespace Lina::Resources
 		MetadataResource() {};
 		~MetadataResource() {};
 
-		bool LoadFromFile(ResourceType type, const std::string& path, Event::EventSystem* eventSys);
+		bool LoadFromFile(ResourceType type, StringIDType resourceSid, const std::string& path, Event::EventSystem* eventSys);
 		bool LoadFromMemory(ResourceType type, StringIDType m_sid, unsigned char* buffer, size_t bufferSize, Event::EventSystem* eventSys);
 
 	};

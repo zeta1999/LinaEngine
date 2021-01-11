@@ -27,6 +27,9 @@ SOFTWARE.
 */
 
 #include "Core/Backend/Filament/FilaImage.hpp"
+#include "Core/Log.hpp"
+#include "Core/ResourcesCommon.hpp"
+#include "Utility/FileUtility.hpp"
 #include <stb/stb_image.h>
 #include <fstream>
 #include <cereal/archives/portable_binary.hpp>
@@ -38,13 +41,15 @@ namespace Lina::Graphics
 	{
 		m_engine = engine;
 		m_resEvent = e;
-
 	}
+
 	void FilaImage::Construct()
 	{
 		Texture::PixelBufferDescriptor buffer(m_resEvent.m_data, size_t((size_t)m_resEvent.m_width * (size_t)m_resEvent.m_height * (size_t)4), Texture::Format::RGBA, Texture::Type::UBYTE, (Texture::PixelBufferDescriptor::Callback)&stbi_image_free);
-		m_tex = Texture::Builder().width(uint32_t(m_resEvent.m_width)).height(uint32_t(m_resEvent.m_height)).levels(1).sampler(Texture::Sampler::SAMPLER_2D).format(m_internalFormat).build(*m_engine);
+		m_tex = Texture::Builder().width(uint32_t(m_resEvent.m_width)).height(uint32_t(m_resEvent.m_height)).levels(m_mipLevel).sampler(Texture::Sampler::SAMPLER_2D).format(m_internalFormat).build(*m_engine);
 		m_sampler = new TextureSampler(m_minFilter, m_magFilter, m_wrapS, m_wrapT, m_wrapR);
+		m_isConstructed = true;
+		LINA_TRACE("[Fila Image] -> Constructed.");
 	}
 
 	void FilaImage::LoadMetadata(const std::string& path)
@@ -68,9 +73,10 @@ namespace Lina::Graphics
 		}
 	}
 
-	void FilaImage::ExportMetadata(const std::string& path)
+	void FilaImage::ExportMetadata()
 	{
 		{
+			std::string path = FileUtility::RemoveExtensionFromFileName(m_resourcePath) + std::string(LINAIMAGE_EXT);
 			std::ofstream stream(path, std::ios::binary);
 			{
 				cereal::PortableBinaryOutputArchive oarchive(stream);

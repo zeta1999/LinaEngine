@@ -30,11 +30,12 @@ SOFTWARE.
 #include "EventSystem/Events.hpp"
 #include "EventSystem/EventSystem.hpp"
 #include "Core/Log.hpp"
+#include "Utility/FileUtility.hpp"
 #include <fstream>
 
 namespace Lina::Resources
 {
-	bool MetadataResource::LoadFromFile(ResourceType type, const std::string& path, Event::EventSystem* eventSys)
+	bool MetadataResource::LoadFromFile(ResourceType type, StringIDType resourceSid, const std::string& path, Event::EventSystem* eventSys)
 	{
         std::ifstream file(path, std::ios::binary);
 
@@ -52,6 +53,7 @@ namespace Lina::Resources
         {
             Event::EImageMetaResourceLoaded e = Event::EImageMetaResourceLoaded();
             e.m_sid = StringID(path.c_str()).value();
+            e.m_imageSid = resourceSid;
 
             // reserve capacity
             e.m_data.reserve(fileSize);
@@ -70,6 +72,7 @@ namespace Lina::Resources
         {
             Event::EMeshMetaResourceLoaded e = Event::EMeshMetaResourceLoaded();
             e.m_sid = StringID(path.c_str()).value();
+            e.m_meshSid = resourceSid;
 
             // reserve capacity
             e.m_data.reserve(fileSize);
@@ -88,6 +91,7 @@ namespace Lina::Resources
         {
             Event::EMaterialMetaResourceLoaded e = Event::EMaterialMetaResourceLoaded();
             e.m_sid = StringID(path.c_str()).value();
+            e.m_materialSid = resourceSid;
 
             // reserve capacity
             e.m_data.reserve(fileSize);
@@ -105,7 +109,7 @@ namespace Lina::Resources
       
         return true;
 	}
-	bool MetadataResource::LoadFromMemory(ResourceType type, StringIDType m_sid, unsigned char* buffer, size_t bufferSize, Event::EventSystem* eventSys)
+	bool MetadataResource::LoadFromMemory(ResourceType type, StringIDType m_sid,  unsigned char* buffer, size_t bufferSize, Event::EventSystem* eventSys)
 	{
         if (type == ResourceType::ImageMeta)
         {

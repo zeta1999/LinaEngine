@@ -1,4 +1,4 @@
-/* 
+/*
 This file is a part of: Lina Engine
 https://github.com/inanevin/LinaEngine
 
@@ -81,7 +81,7 @@ static constexpr uint16_t TRIANGLE_INDICES[3] = { 0, 1, 2 };
 
 namespace Lina::Graphics
 {
-	
+
 	TransformManager::Instance ti2;
 
 
@@ -103,6 +103,7 @@ namespace Lina::Graphics
 		m_eventSys->Disconnect<Event::EMeshResourceLoaded>(this);
 		m_eventSys->Disconnect<Event::EMaterialResourceLoaded>(this);
 		m_eventSys->Disconnect<Event::EImageResourceLoaded>(this);
+		m_eventSys->Disconnect<Event::EImageMetaResourceLoaded>(this);
 	}
 
 
@@ -120,12 +121,13 @@ namespace Lina::Graphics
 		m_eventSys->Connect<Event::EMeshResourceLoaded, &RenderEngineFilament::OnMeshResourceLoaded>(this);
 		m_eventSys->Connect<Event::EMaterialResourceLoaded, &RenderEngineFilament::OnMaterialResourceLoaded>(this);
 		m_eventSys->Connect<Event::EImageResourceLoaded, &RenderEngineFilament::OnImageResourceLoaded>(this);
+		m_eventSys->Connect<Event::EImageMetaResourceLoaded, &RenderEngineFilament::OnImageMetaResourceLoaded>(this);
 	}
 
 	void RenderEngineFilament::OnAppLoad(Event::EAppLoad& e)
 	{
 		m_appInfo = e.m_appInfo;
-		
+
 		// First create empty window context.
 		m_window.SetReferences(m_eventSys, e.m_appInfo->m_windowProperties);
 		m_window.CreateContext();
@@ -134,7 +136,7 @@ namespace Lina::Graphics
 		m_engine = filament::Engine::create();
 		m_swapchain = m_engine->createSwapChain(m_window.GetNativeWindow());
 		m_renderer = m_engine->createRenderer();
-	
+
 		// Create the primary camera, game view & scene, & get manager references.
 		m_gameCamera = m_engine->createCamera(utils::EntityManager::get().create());
 		m_uiCamera = m_engine->createCamera(utils::EntityManager::get().create());
@@ -146,7 +148,7 @@ namespace Lina::Graphics
 		m_renderableManager = &m_engine->getRenderableManager();
 
 		// Configure game scene, camera & view.
-		auto sb = Skybox::Builder().color(math::float4{ 0.0735f, 0.035f, 0.035f, 1.0f }).showSun(true).build(*m_engine);	
+		auto sb = Skybox::Builder().color(math::float4{ 0.0735f, 0.035f, 0.035f, 1.0f }).showSun(true).build(*m_engine);
 		e.m_appInfo->m_windowProperties.m_width = 360;
 		e.m_appInfo->m_windowProperties.m_height = 450;
 		double aspect = ((double)e.m_appInfo->m_windowProperties.m_width / (double)e.m_appInfo->m_windowProperties.m_height);
@@ -154,11 +156,11 @@ namespace Lina::Graphics
 
 		m_gameCamera->setExposure(16.0f, 1 / 125.0f, 100.0f);
 		m_gameCamera->setExposure(100.0f);
-		m_gameCamera->setProjection(90.0f, aspect, 0.1f, 1000.0f);	
+		m_gameCamera->setProjection(90.0f, aspect, 0.1f, 1000.0f);
 		m_gameCamera->lookAt({ 0, 0, -10 }, { 0, 0, 0 }, { 0, 1, 0 });
 		m_gameView->setViewport({ 360, 0, (uint32_t)e.m_appInfo->m_windowProperties.m_width, (uint32_t)e.m_appInfo->m_windowProperties.m_height });
 		m_gameView->setScene(m_gameScene);
-		m_gameView->setCamera(m_gameCamera); 
+		m_gameView->setCamera(m_gameCamera);
 		m_gameView->setName("game-view");
 
 
@@ -188,18 +190,20 @@ namespace Lina::Graphics
 			.castShadows(true)
 			.build(*m_engine, light);
 		m_gameScene->addEntity(light);
-		
+
 	}
+
 	void RenderEngineFilament::OnPreMainLoop(Event::EPreMainLoop& e)
 	{
 		LINA_TRACE("[Render Engine Filament] -> Startup");
-
+		ConstructAllImages();
 	}
+
 	void RenderEngineFilament::OnPostMainLoop(Event::EPostMainLoop& e)
 	{
 		LINA_TRACE("[Render Engine Filament] -> Shutdown");
 
-		
+
 	}
 	void RenderEngineFilament::OnWindowResize(Event::EWindowResized& e)
 	{
@@ -223,8 +227,30 @@ namespace Lina::Graphics
 
 	void RenderEngineFilament::OnImageResourceLoaded(Event::EImageResourceLoaded& e)
 	{
-		FilaImage* image = new FilaImage(m_engine, e);
-		
+		m_loadedImages[e.m_sid] = new FilaImage(m_engine, e);
+		FilaImage* img = m_loadedImages[e.m_sid];
+
+		img->m_resourcePath = e.m_path;
+
+		// If this image's metadata is already loaded, load meta into the image.
+		if (m_loadedImageMetas.find(e.m_sid) != m_loadedImageMetas.end())
+		{
+			m_loadedImages[e.m_sid]->LoadMetadata(m_loadedImageMetas[e.m_sid].m_data.data(), m_loadedImageMetas[e.m_sid].m_data.size());
+			m_loadedImageMetas.erase(e.m_sid);
+		}
+
+	}
+
+	void RenderEngineFilament::OnImageMetaResourceLoaded(Event::EImageMetaResourceLoaded& e)
+	{
+		// If an image that this meta is associated has not been loaded yet,
+		// store the meta data, else load metadata into the image.
+		if (m_loadedImages.find(e.m_imageSid) == m_loadedImages.end())
+			m_loadedImageMetas[e.m_imageSid] = Event::EImageMetaResourceLoaded(e);
+		else
+		{
+			m_loadedImages[e.m_imageSid]->LoadMetadata(e.m_data.data(), e.m_data.size());
+		}
 	}
 
 	static float t = 0.0f;
@@ -238,7 +264,7 @@ namespace Lina::Graphics
 		AddMeshData();
 		AddMaterialData();
 
-		t += 0.0002f;		
+		t += 0.0002f;
 		auto& tcm = m_engine->getTransformManager();
 		// math::mat4f transform2 = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(-1, Math::Sin(t) * 2, 0) };
 		m_gameCamera->lookAt({ 0, 0, 3 }, { 0, 0, 0 }, { 0, 1, 0 });
@@ -250,7 +276,7 @@ namespace Lina::Graphics
 
 		m_eventSys->Trigger<Event::EPreRender>();
 
-		if (m_renderer->beginFrame(m_swapchain)) 
+		if (m_renderer->beginFrame(m_swapchain))
 		{
 			// for each View
 
@@ -340,5 +366,21 @@ namespace Lina::Graphics
 
 		}
 
+	}
+
+	void RenderEngineFilament::ConstructAllImages()
+	{
+		for (auto img : m_loadedImages)
+		{
+			if (!img.second->m_isConstructed)
+			{
+				img.second->Construct();
+
+				if (m_appInfo->m_appMode != ApplicationMode::Standalone)
+					img.second->ExportMetadata();
+			}
+		}
+
+		m_loadedImageMetas.clear();
 	}
 }

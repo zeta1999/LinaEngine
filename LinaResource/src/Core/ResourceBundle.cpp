@@ -35,6 +35,7 @@ SOFTWARE.
 #include "Resources/MetadataResource.hpp"
 #include "Core/Log.hpp"
 #include "EventSystem/EventSystem.hpp"
+#include "Utility/FileUtility.hpp"
 
 namespace Lina::Resources
 {
@@ -146,7 +147,18 @@ namespace Lina::Resources
 		{
 			ImageResource* img = new ImageResource();
 			if (img->LoadFromFile(path, eventSys))
-				m_imagePackage[StringID(path.c_str()).value()] = img;
+			{
+				StringIDType imgSid = StringID(path.c_str()).value();
+				m_imagePackage[imgSid] = img;
+
+				std::string metaPath = FileUtility::RemoveExtensionFromFileName(path) + std::string(LINAIMAGE_EXT);
+				if (FileUtility::FileExists(metaPath))
+				{
+					MetadataResource* meta = new MetadataResource();
+					meta->LoadFromFile(ResourceType::ImageMeta, imgSid, metaPath, eventSys);
+					m_metaPackage[StringID(metaPath.c_str()).value()] = meta;
+				}
+			}
 			else
 				delete img;
 		}
@@ -154,10 +166,40 @@ namespace Lina::Resources
 		{
 			MeshResource* mesh = new MeshResource();
 			if (mesh->LoadFromFile(path, eventSys))
-				m_meshPackage[StringID(path.c_str()).value()] = mesh;
+			{
+				StringIDType meshSid = StringID(path.c_str()).value();
+				m_meshPackage[meshSid] = mesh;
+
+				std::string metaPath = FileUtility::RemoveExtensionFromFileName(path) + std::string(LINAMESH_EXT);
+				if (FileUtility::FileExists(metaPath))
+				{
+					MetadataResource* meta = new MetadataResource();
+					meta->LoadFromFile(ResourceType::MeshMeta, meshSid, metaPath, eventSys);
+					m_metaPackage[StringID(metaPath.c_str()).value()] = meta;
+				}
+			}
 			else
 				delete mesh;
 		}
+		else if (type == ResourceType::Material)
+		{
+			MaterialResource* mat = new MaterialResource();
+			if (mat->LoadFromFile(path, eventSys))
+			{
+				StringIDType matSid = StringID(path.c_str()).value();
+				m_materialPackage[matSid] = mat;
+
+				std::string metaPath = FileUtility::RemoveExtensionFromFileName(path) + std::string(LINAMAT_EXT);
+				if (FileUtility::FileExists(metaPath))
+				{
+					MetadataResource* meta = new MetadataResource();
+					meta->LoadFromFile(ResourceType::MaterialMeta, matSid, metaPath, eventSys);
+					m_metaPackage[StringID(metaPath.c_str()).value()] = meta;
+				}
+			}
+			else
+				delete mat;
+		}	
 		else if (type == ResourceType::Audio)
 		{
 			AudioResource* aud = new AudioResource();
@@ -165,22 +207,6 @@ namespace Lina::Resources
 				m_audioPackage[StringID(path.c_str()).value()] = aud;
 			else
 				delete aud;
-		}
-		else if (type == ResourceType::Material)
-		{
-			MaterialResource* mat = new MaterialResource();
-			if (mat->LoadFromFile(path, eventSys))
-				m_materialPackage[StringID(path.c_str()).value()] = mat;
-			else
-				delete mat;
-		}
-		else if (type == ResourceType::ImageMeta || type == ResourceType::MeshMeta || type == ResourceType::MaterialMeta)
-		{
-			MetadataResource* meta = new MetadataResource();
-			if (meta->LoadFromFile(type, path, eventSys))
-				m_metaPackage[StringID(path.c_str()).value()] = meta;
-			else
-				delete meta;
 		}
 	}
 }

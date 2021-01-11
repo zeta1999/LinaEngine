@@ -49,7 +49,9 @@ namespace Lina::Resources
 #define RESOURCEPACKAGE_EXTENSION ".linapackage"
 #define IMAGEPACKAGE_PATH "Resources/Packages/images.linapackage"
 #define PACKAGE_PASS L"1234"
-
+#define LINAMAT_EXT ".linamat"
+#define LINAIMAGE_EXT ".linaimage"
+#define LINAMESH_EXT ".linamesh"
 
 	enum class ResourceProgressState
 	{

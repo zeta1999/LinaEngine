@@ -82,6 +82,8 @@ namespace utils
 
 namespace Lina::Graphics
 {
+	class FilaImage;
+
 	class RenderEngineFilament
 	{
 		
@@ -112,12 +114,14 @@ namespace Lina::Graphics
 		void OnMeshResourceLoaded(Event::EMeshResourceLoaded& e);
 		void OnMaterialResourceLoaded(Event::EMaterialResourceLoaded& e);
 		void OnImageResourceLoaded(Event::EImageResourceLoaded& e);
+		void OnImageMetaResourceLoaded(Event::EImageMetaResourceLoaded& e);
 		void Tick();
 		void Render();
 		void DisconnectEvents();
 		void AddMeshData();
 		void AddMaterialData();
-	
+		void ConstructAllImages();
+
 	private:
 
 		bool m_initialized = false;
@@ -144,6 +148,8 @@ namespace Lina::Graphics
 		std::unordered_map < StringIDType, std::vector<unsigned char>> m_materialBuffer;
 		std::unordered_map<StringIDType, filamesh::MeshReader::Mesh> m_loadedMeshes;
 		std::unordered_map<StringIDType, filament::Material*> m_loadedMaterials;
+		std::unordered_map<StringIDType, FilaImage*> m_loadedImages;
+		std::unordered_map<StringIDType, Event::EImageMetaResourceLoaded> m_loadedImageMetas;
 		ApplicationInfo* m_appInfo = nullptr;
 	};
 }

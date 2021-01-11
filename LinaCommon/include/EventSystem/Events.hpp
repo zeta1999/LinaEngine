@@ -108,13 +108,13 @@ namespace Lina::Event
 
 	// Resources.
 	struct EAudioResourceLoaded { StringIDType m_sid;  void* m_data; int m_dataSize; int m_format; float m_freq; };
-	struct EImageResourceLoaded { StringIDType m_sid;  unsigned char* m_data; int32_t m_width; int32_t m_height; };
+	struct EImageResourceLoaded { StringIDType m_sid;  unsigned char* m_data; int32_t m_width; int32_t m_height; std::string m_path; };
 	struct EMeshResourceLoaded { StringIDType m_sid; std::vector<unsigned char> m_data; std::string m_path; };
 	struct EMaterialResourceLoaded { StringIDType m_sid; std::vector<unsigned char> m_data;};
 	struct EShaderResourceLoaded { StringIDType m_sid; const char* m_data; size_t m_dataSize; };
-	struct EImageMetaResourceLoaded { StringIDType m_sid; std::vector<unsigned char> m_data;};
-	struct EMeshMetaResourceLoaded { StringIDType m_sid; std::vector<unsigned char> m_data;};
-	struct EMaterialMetaResourceLoaded { StringIDType m_sid; std::vector<unsigned char> m_data;};
+	struct EImageMetaResourceLoaded { StringIDType m_sid; std::vector<unsigned char> m_data; StringIDType m_imageSid = SID_EMPTY; };
+	struct EMeshMetaResourceLoaded { StringIDType m_sid; std::vector<unsigned char> m_data; StringIDType m_meshSid = SID_EMPTY; };
+	struct EMaterialMetaResourceLoaded { StringIDType m_sid; std::vector<unsigned char> m_data; StringIDType m_materialSid = SID_EMPTY; };
 	struct EResourceProgressStarted {};
 	struct EResourceProgressEnded {};
 }

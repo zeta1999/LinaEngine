@@ -67,7 +67,8 @@ namespace Lina::Graphics
 		void Construct();
 		void LoadMetadata(const std::string& path);
 		void LoadMetadata(unsigned char* buffer, size_t bufferSize);
-		void ExportMetadata(const std::string& path);
+		void ExportMetadata();
+		inline void SetResourceSID(StringIDType sid) { m_imageSid = sid; }
 
 	private:
 
@@ -81,13 +82,17 @@ namespace Lina::Graphics
 		filament::TextureSampler::WrapMode m_wrapT = filament::TextureSampler::WrapMode::CLAMP_TO_EDGE;
 		filament::TextureSampler::WrapMode m_wrapR = filament::TextureSampler::WrapMode::CLAMP_TO_EDGE;
 		filament::Texture::InternalFormat m_internalFormat = filament::Texture::InternalFormat::RGBA8;
+		std::string m_resourcePath;
+		StringIDType m_imageSid = SID_EMPTY;
+		uint8_t m_mipLevel = 1;
+		bool m_isConstructed = false;
 
 		friend class cereal::access;
 
 		template<typename Archive>
 		void serialize(Archive& archive)
 		{
-			archive(m_minFilter, m_magFilter, m_wrapS, m_wrapT, m_wrapR);
+			archive(m_minFilter, m_magFilter, m_wrapS, m_wrapT, m_wrapR, m_imageSid, m_mipLevel);
 		}
 	};
 }
