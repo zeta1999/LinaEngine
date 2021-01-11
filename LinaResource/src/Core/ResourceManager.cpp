@@ -88,10 +88,12 @@ namespace Lina::Resources
 	{
 		m_appMode = e.m_appInfo->m_appMode;
 
-		m_activeLevel.AddUsedResource("Resources/test.wav");
-		m_activeLevel.AddUsedResource("Resources/Shaders/frag.spv");
-		m_activeLevel.AddUsedResource("Resources/Shaders/vert.spv");
-		m_activeLevel.AddUsedResource("Resources/monkey.filamesh");
+		
+		m_activeLevel.AddUsedResource("Resources/Sandbox/Meshes/monkey.filamesh");
+		m_activeLevel.AddUsedResource("Resources/Sandbox/Arm_defaultMat_Normal.jpg");
+		m_activeLevel.AddUsedResource("Resources/Sandbox/Arm_defaultMat_Normal.linaimage");
+		m_activeLevel.AddUsedResource("Resources/Sandbox/prototype_grid.png");
+		m_activeLevel.AddUsedResource("Resources/Sandbox/prototype_grid.linaimage");
 
 		// If we are in editor, fill our resource bundle with all the files imported in the project's Resources directory.
 		if (m_appMode == ApplicationMode::Editor || m_appMode == ApplicationMode::EditorGame)
