@@ -229,13 +229,12 @@ namespace Lina::Graphics
 	{
 		m_loadedImages[e.m_sid] = new FilaImage(m_engine, e);
 		FilaImage* img = m_loadedImages[e.m_sid];
-
 		img->m_resourcePath = e.m_path;
 
 		// If this image's metadata is already loaded, load meta into the image.
 		if (m_loadedImageMetas.find(e.m_sid) != m_loadedImageMetas.end())
 		{
-			m_loadedImages[e.m_sid]->LoadMetadata(m_loadedImageMetas[e.m_sid].m_data.data(), m_loadedImageMetas[e.m_sid].m_data.size());
+			img->LoadMetadata(m_loadedImageMetas[e.m_sid].m_data.data(), m_loadedImageMetas[e.m_sid].m_data.size());
 			m_loadedImageMetas.erase(e.m_sid);
 		}
 
@@ -253,8 +252,6 @@ namespace Lina::Graphics
 		}
 	}
 
-	static float t = 0.0f;
-	static bool once = false;
 	void RenderEngineFilament::Tick()
 	{
 		PROFILER_FUNC();
@@ -264,7 +261,6 @@ namespace Lina::Graphics
 		AddMeshData();
 		AddMaterialData();
 
-		t += 0.0002f;
 		auto& tcm = m_engine->getTransformManager();
 		// math::mat4f transform2 = filament::math::mat4f{ filament::math::mat3f(1), filament::math::float3(-1, Math::Sin(t) * 2, 0) };
 		m_gameCamera->lookAt({ 0, 0, 3 }, { 0, 0, 0 }, { 0, 1, 0 });
